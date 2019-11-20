@@ -52,6 +52,7 @@ if ( ! class_exists( 'Controller' ) ) {
 		 * @return mixed Array if validation is ok, false if validation fails.
 		 */
 		public function valitize( $settings ) {
+			// test
 			if ( $this->validate( $settings ) ) {
 				$this->sanitize( $settings );
 				return $settings;
