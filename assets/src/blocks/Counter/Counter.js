@@ -16,7 +16,7 @@ export class Counter extends Component {
 
     return (
       <div>
-        <h3>{ __('What style of counter do you need?', 'p4ge') }</h3>
+        <h3>{ __('What style of counter do you need???', 'p4ge') }</h3>
 
         <div>
           <LayoutSelector
