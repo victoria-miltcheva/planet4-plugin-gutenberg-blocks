@@ -71,7 +71,8 @@ jobs:
 
   build-and-test-codeception:
     docker:
-      - image: greenpeaceinternational/p4-builder:latest
+#      - image: greenpeaceinternational/p4-builder:latest
+      - image: greenpeaceinternational/p4-builder:test-build-assets-in-dev-plugin-branches
     working_directory: /home/circleci/
     environment:
       APP_HOSTNAME: www.planet4.test
