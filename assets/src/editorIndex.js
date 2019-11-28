@@ -19,6 +19,7 @@ import { addBlockFilters } from './BlockFilters';
 import { setupImageBlockExtension } from './ImageBlockExtension';
 import { replaceTaxonomyTermSelectors } from "./replaceTaxonomyTermSelectors"
 import { addSubAndSuperscript } from './RichTextEnhancements';
+import { setupCampaignThemeSwitcher } from './CampaignThemeSwitcher';
 
 const articlesBlock = new ArticlesBlock();
 const carouselHeaderBlock = new CarouselHeaderBlock();
@@ -39,4 +40,5 @@ const timelineBlock = new TimelineBlock();
 addBlockFilters();
 addSubAndSuperscript(window.wp);
 setupImageBlockExtension();
-replaceTaxonomyTermSelectors()
+replaceTaxonomyTermSelectors();
+setupCampaignThemeSwitcher();

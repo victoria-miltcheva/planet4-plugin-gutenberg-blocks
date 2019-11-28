@@ -182,6 +182,7 @@ final class Loader {
 		add_action( 'admin_menu', [ $this, 'load_i18n' ] );
 		// Load the editor scripts only enqueuing editor scripts while in context of the editor.
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_scripts' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_campaigns_assets' ], 10 );
 
 		// Setup image sizes.
 		add_action( 'admin_init', [ $this, 'setup_image_sizes' ] );
@@ -191,6 +192,10 @@ final class Loader {
 
 		// Register a block category.
 		add_filter( 'block_categories', [ $this, 'register_block_category' ], 10, 2 );
+
+		// Set body class for the editor
+		add_filter( 'admin_body_class', [ $this, 'add_theme_class' ], 5 );
+
 		// Provide hook for other plugins.
 		do_action( 'p4gbks_plugin_loaded' );
 	}
@@ -344,7 +349,8 @@ final class Loader {
 		$option_values = get_option( 'planet4_options' );
 
 		$reflection_vars = [
-			'home'            => P4GBKS_PLUGIN_URL . '/public/',
+			'home'            => P4GBKS_PLUGIN_URL . 'public/',
+			'plugin_root'     => P4GBKS_PLUGIN_URL,
 			'planet4_options' => $option_values,
 		];
 		wp_localize_script( 'planet4-blocks-script', 'p4ge_vars', $reflection_vars );
@@ -373,6 +379,28 @@ final class Loader {
 	}
 
 	/**
+	 * Add theme class to the body element
+	 */
+	public function add_theme_class( $classes ) {
+		$post = get_post();
+		$post->custom = get_post_custom($post->id);
+
+		if ( empty( $post->custom['_campaign_page_template'] ) ) return;
+
+		$campaign_theme = $post->custom['_campaign_page_template'][0];
+
+		if ( is_string( $campaign_theme ) ) {
+			if( is_array( $classes ) ) {
+				$classes[] = 'theme-' . $campaign_theme;
+			} else {
+				$classes .= 'theme-' . $campaign_theme;
+			}
+		}
+
+		return $classes;
+	}
+
+	/**
 	 * Load assets for the frontend.
 	 */
 	public function enqueue_campaigns_assets() {
@@ -382,19 +410,20 @@ final class Loader {
 		if ( 'campaign' === $post_type ) {
 
 			$post = get_post();
+			$post->custom = get_post_custom($post->id);
 
-			$campaign_theme = $post->custom['_campaign_page_template'];
+			if ( empty( $post->custom['_campaign_page_template'] ) ) return;
+
+			$campaign_theme = $post->custom['_campaign_page_template'][0];
 
 			if ( is_string( $campaign_theme ) ) {
 
 				$css_theme_creation = filectime( P4GBKS_PLUGIN_DIR . "/assets/build/theme_$campaign_theme.min.css" );
 
 				wp_enqueue_style(
-					'theme_antarctic',
+					'campaign-theme',
 					P4GBKS_PLUGIN_URL . "/assets/build/theme_$campaign_theme.min.css",
-					[
-						'plugin-blocks',
-					],
+					[],
 					$css_theme_creation
 				);
 			}
