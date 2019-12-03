@@ -17,41 +17,41 @@ const logoOptions = [
   { value: 'plastic', label: __( 'Plastics', 'planet4-blocks-backend' ) },
 ]
 
+// export const setupCampaignSidebar = () => {
+//
+//   registerPlugin( sidebarId, {
+//     icon: 'dashboard',
+//     render: () => {
+//       return (
+//         <>
+//           <PluginSidebar
+//             name={ sidebarId }
+//             title={ __( 'Campaign Options', 'planet4-blocks-backend' ) }
+//           >
+//             <PanelBody
+//               title={ __( "Logo own class", '' ) }
+//               intialOpen={ true }
+//             >
+//               { withPostMeta( 'campaign_logo', SelectControl, {
+//                 label: __( 'Change the campaign logo' ),
+//                 options: logoOptions,
+//               } )() }
+//               { withPostMeta( 'campaign_nav_color', ColorPicker, {
+//                 label: __( 'Set the campaign nav color' ),
+//               } )() }
+//             </PanelBody>
+//           </PluginSidebar>
+//         </>
+//       )
+//     }
+//   } )
+// }
+
+// /**
+//  * Example function that is not used. Here the fields are defined outside render, which makes for a better overview
+//  * in the render method, but it doesn't have the advantage of having everything in one place.
+//  */
 export const setupCampaignSidebar = () => {
-
-  registerPlugin( sidebarId, {
-    icon: 'dashboard',
-    render: () => {
-      return (
-        <>
-          <PluginSidebar
-            name={ sidebarId }
-            title={ __( 'Campaign Options', 'planet4-blocks-backend' ) }
-          >
-            <PanelBody
-              title={ __( "Logo own class", '' ) }
-              intialOpen={ true }
-            >
-              { withPostMeta( 'campaign_logo', SelectControl, {
-                label: __( 'Change the campaign logo' ),
-                options: logoOptions,
-              } )() }
-              { withPostMeta( 'campaign_nav_color', ColorPicker, {
-                label: __( 'Set the campaign nav color' ),
-              } )() }
-            </PanelBody>
-          </PluginSidebar>
-        </>
-      )
-    }
-  } )
-}
-
-/**
- * Example function that is not used. Here the fields are defined outside render, which makes for a better overview
- * in the render method, but it doesn't have the advantage of having everything in one place.
- */
-const exampleWithSeparateDeclaration = () => {
   const Logo = withPostMeta( 'campaign_logo', SelectControl, {
     label: __( 'Change the campaign logo' ),
     options: logoOptions
