@@ -1,10 +1,12 @@
 import { withSelect, withDispatch } from "@wordpress/data";
-import { ColorPicker } from "@wordpress/components"
+import { ColorPalette, ColorPicker, RadioControl, SelectControl } from "@wordpress/components"
 import { compose } from '@wordpress/compose';
 import { Component} from '@wordpress/element';
 
 const getValuePropName = ( Component ) => {
   switch ( Component ) {
+    case RadioControl:
+      return 'selected'
     case ColorPicker:
       return 'color'
   }
@@ -50,9 +52,36 @@ export function withPostMeta( WrappedComponent ) {
       console.log('mounted')
     }
 
+    handleDependency(dependency, passThroughProps) {
+      if ( !dependency ) {
+        return passThroughProps
+      }
+
+      let optionsKey
+
+      switch ( WrappedComponent ) {
+        case SelectControl:
+          optionsKey = 'options'
+          break
+        case ColorPalette:
+          optionsKey = 'colors'
+          break
+        default:
+          throw `Cannot handle dependency for type ${ WrappedComponent.name }`
+      }
+
+      const { dependentOptions, ...resolvedProps } = passThroughProps
+      const dependencyValue = this.props.postMeta[ dependency ]
+      resolvedProps[optionsKey] = dependentOptions[ dependencyValue ]
+      return resolvedProps
+    }
+
     render() {
 
-      const { metaKey, postMeta, ...passThroughProps } = this.props
+      // postMeta and writeMeta are only extracted here to remove the from passThroughProps
+      const { metaKey, dependsOn, postMeta, writeMeta, ...otherProps } = this.props
+
+      const passThroughProps = this.handleDependency(dependsOn, otherProps)
 
       return <WrappedComponent
         { ...{
