@@ -19,6 +19,9 @@ const logoOptions = [
 
 export const setupCampaignSidebar = () => {
 
+  const SelectMeta = withPostMeta(SelectControl)
+  const ColorPickerMeta = withPostMeta(ColorPicker)
+
   registerPlugin( sidebarId, {
     icon: 'dashboard',
     render: () => {
@@ -32,13 +35,14 @@ export const setupCampaignSidebar = () => {
               title={ __( "Logo own class", '' ) }
               intialOpen={ true }
             >
-              { withPostMeta( 'campaign_logo', SelectControl, {
-                label: __( 'Change the campaign logo' ),
-                options: logoOptions,
-              } )() }
-              { withPostMeta( 'campaign_nav_color', ColorPicker, {
-                label: __( 'Set the campaign nav color' ),
-              } )() }
+              <SelectMeta
+                metaKey={ 'campaign_logo' }
+                options={ logoOptions }
+                label={ __( 'Change the campaign logo' ) }
+              />
+              <ColorPickerMeta
+                metaKey={ 'campaign_nav_color' }
+              />
             </PanelBody>
           </PluginSidebar>
         </>
@@ -47,40 +51,3 @@ export const setupCampaignSidebar = () => {
   } )
 }
 
-/**
- * Example function that is not used. Here the fields are defined outside render, which makes for a better overview
- * in the render method, but it doesn't have the advantage of having everything in one place.
- */
-const exampleWithSeparateDeclaration = () => {
-  const Logo = withPostMeta( 'campaign_logo', SelectControl, {
-    label: __( 'Change the campaign logo' ),
-    options: logoOptions
-  } )
-  const NavColor = withPostMeta( 'campaign_nav_color', ColorPicker, {
-    label: __( 'Set the campaign nav color' )
-  } )
-
-
-  registerPlugin( 'planet4-test', {
-    icon: 'smiley',
-    render: () => {
-      return (
-        <>
-          <PluginSidebar
-            name={ 'planet4-test' }
-            title={ __( 'Campaign Options', 'planet4-blocks-backend' ) }
-          >
-            <PanelBody
-              title={ __( "Logo", '' ) }
-              intialOpen={ true }
-            >
-              <Logo/>
-              <NavColor/>
-            </PanelBody>
-          </PluginSidebar>
-        </>
-      )
-    }
-  } )
-
-}

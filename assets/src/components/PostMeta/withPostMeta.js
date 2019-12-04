@@ -32,48 +32,52 @@ const getValueFromValue = (Component, value) => {
 }
 
 // This function takes a component...
-export function withPostMeta( metaKey, WrappedComponent, additionalProps ) {
+export function withPostMeta( WrappedComponent ) {
 
   class WrappingComponent extends Component {
     constructor( props ) {
       super( props );
       this.onChange = this.onChange.bind( this )
-      this.metaKey = metaKey
+      this.valueProp = getValuePropName( WrappedComponent )
+      this.onChangePropName = getOnChangePropName( WrappedComponent )
     }
 
-    onChange( value ) {
-      this.props.writeMeta( getValueFromValue( WrappedComponent, value ) )
+    onChange( metaKey, value ) {
+      this.props.writeMeta( metaKey, getValueFromValue( WrappedComponent, value ) )
+    }
+
+    componentDidMount() {
+      console.log('mounted')
     }
 
     render() {
-      const valueProp = getValuePropName( WrappedComponent )
-      const onChangePropName = getOnChangePropName( WrappedComponent )
+
+      const { metaKey, postMeta, ...passThroughProps } = this.props
 
       return <WrappedComponent
         { ...{
-          [ valueProp ]: this.props.value,
-          [ onChangePropName ]: ( value ) => {
-            this.onChange( value )
+          [ this.valueProp ]: postMeta[ metaKey ],
+          [ this.onChangePropName ]: ( value ) => {
+            this.onChange( metaKey, value )
           }
         } }
-        { ...additionalProps }
+        { ...passThroughProps }
       />;
     }
   }
 
-  // ...and returns another component...
   return compose(
     withSelect(
       ( select ) => {
         return {
-          value: select( 'core/editor' ).getEditedPostAttribute( 'meta' )[ metaKey ]
+          postMeta: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
         }
       }
     ),
     withDispatch(
       ( dispatch ) => {
         return {
-          writeMeta: ( value ) => {
+          writeMeta: ( metaKey, value ) => {
             dispatch( 'core/editor' ).editPost( { meta: { [ metaKey ]: value } } )
           }
         }
