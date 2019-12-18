@@ -406,4 +406,29 @@ body.theme-oceans {
   .video-block {
     @include campaign_video($oceans-aqua);
   }
+
+  .page-template table.spreadsheet-table {
+    color: #fff;
+
+    tr {
+      background-color: #407ea2;
+
+      &:nth-child(odd) {
+        background-color: #336582;
+      }
+
+      &:hover {
+        background-color: #074365;
+      }
+
+      &:first-child {
+        background-color: #113444;
+        border-bottom-color: #fff;
+      }
+    }
+
+    .spreadsheet-table-search {
+      border-color: #407ea2;
+    }
+  }
 }
