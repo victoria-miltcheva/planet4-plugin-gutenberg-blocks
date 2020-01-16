@@ -23,7 +23,8 @@ $(document).ready(function () {
 
       for (let j = 0; j < $headings.length; j++) {
         let $heading = $($headings[j]);
-        if ($heading.text().replace(/\u2010|\u2011|\u2013/, '') === menu.text.replace('-', '')) {
+        const headingText = $heading.text().replace(/\u2010|\u2011|\u2013/, '').trim();
+        if (headingText === menu.text.replace('-', '')) {
           $heading.prepend('<a id="' + menu.id + '" data-hash-target="' + menu.hash + '"></a>');
         }
       }
@@ -41,7 +42,7 @@ $(document).ready(function () {
     if ($target) {
       $('html, body').animate({
         scrollTop: $target.offset().top - 100
-      }, 2000, function () {
+      }, 1000, function () {
         const position = $(window).scrollTop();
         window.location.hash = link;
         $(window).scrollTop(position);
