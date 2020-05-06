@@ -1,4 +1,5 @@
 import { Spreadsheet } from './Spreadsheet';
+import { CSS_VARIABLES_ATTRIBUTE } from '../CssVariablesAttribute';
 
 export class SpreadsheetBlock {
   constructor() {
@@ -19,29 +20,17 @@ export class SpreadsheetBlock {
           type: 'string',
           default: '',
         },
-        color: {
-          type: 'string',
-          default: '#DCDCDC'
-        },
-        color_name: {
-          type: 'string',
-          default: 'grey'
-        }
+        css_variables: CSS_VARIABLES_ATTRIBUTE,
       },
       edit: ( { isSelected, attributes, setAttributes } ) => {
         function onUrlChange( value ) {
           setAttributes( { url: value } );
         }
 
-        function onTableColorChange( colors, value ) {
-          setAttributes( {color: value} );
-        }
-
         return <Spreadsheet
-          { ...attributes }
+          attributes={attributes}
+          setAttributes={setAttributes}
           isSelected={ isSelected }
-          onUrlChange={ onUrlChange }
-          onTableColorChange={ onTableColorChange }
         />
       },
       save() {
