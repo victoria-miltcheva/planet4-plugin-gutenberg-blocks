@@ -14,6 +14,22 @@ namespace P4GBKS\Blocks;
  */
 abstract class Base_Block {
 
+	protected const CSS_VARIABLES_ATTRIBUTE = [
+		'type'    => 'array',
+		'default' => [],
+		'items'   => [
+			'type'       => 'object',
+			'properties' => [
+				'name'  => [
+					'type' => 'string',
+				],
+				'value' => [
+					'type' => 'string',
+				],
+			],
+		],
+	];
+
 	/**
 	 * Get all the data that will be needed to render the block correctly.
 	 *

@@ -35,6 +35,7 @@ class Spreadsheet extends Base_Block {
 						'type'    => 'string',
 						'default' => '',
 					],
+					'css_variables' => self::CSS_VARIABLES_ATTRIBUTE,
 				],
 			]
 		);
@@ -59,7 +60,7 @@ class Spreadsheet extends Base_Block {
 			$sheet = null;
 		}
 
-		return [ 'sheet' => $sheet ];
+		return [ 'sheet' => $sheet, 'css_variables' => $fields['css_variables'] ];
 	}
 
 	/**

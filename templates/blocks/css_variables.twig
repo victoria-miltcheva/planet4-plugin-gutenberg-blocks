@@ -1,0 +1,7 @@
+{% spaceless %}
+style="
+	{% for variable in css_variables %}
+		--{{ variable.name }}: {{ variable.value }};
+	{% endfor %}
+	"
+{% endspaceless %}
