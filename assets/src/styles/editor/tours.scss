@@ -1,0 +1,65 @@
+body .shepherd-target {
+  border: 2px solid yellow !important;
+}
+
+.editor-tour {
+  min-width: 30vw;
+
+  font-size: 14px;
+  p {
+    font-size: 14px;
+  }
+
+  font-weight: bold;
+  border: 2px solid green;
+  padding: 1rem;
+  background: rgba(222, 222, 222, .9);
+}
+
+.editor-tour-back {
+}
+
+.editor-tour-next {
+}
+
+.shepherd-cancel-icon {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: transparent;
+  border-radius: 8px;
+
+  &:not(:hover) {
+    border: none;
+    margin: 2px;
+  }
+}
+
+.shepherd-header {
+  text-transform: uppercase;
+  font-size: 18px;
+}
+
+.shepherd-text {
+  margin-top: 1rem;
+}
+
+.shepherd-footer {
+  margin-top: 1em;
+  float: right;
+  clear: both;
+}
+
+.shepherd-element .shepherd-arrow:after {
+  //top: -15px;
+  //position: relative;
+  //width: 32px;
+  //height: 40px;
+  //display: inline-block;
+  //content: '';
+  //-webkit-mask: url("../../public/images/arrow-up.svg") no-repeat 50% 50%;
+  //mask: url("../../public/images/arrow-up.svg") no-repeat 50% 50%;
+  //-webkit-mask-size: cover;
+  //mask-size: cover;
+  //background-color: seagreen;
+}

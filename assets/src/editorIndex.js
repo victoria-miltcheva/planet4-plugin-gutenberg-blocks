@@ -23,6 +23,7 @@ import { setupCustomSidebar } from "./setupCustomSidebar";
 import { setUpCssVariables } from './connectCssVariables';
 import { SubPagesBlock } from './blocks/SubPages/SubPagesBlock';
 import { blockEditorValidation } from './BlockEditorValidation';
+import { setupTours } from './setupTours';
 
 new ArticlesBlock();
 new CarouselHeaderBlock();
@@ -50,3 +51,4 @@ replaceTaxonomyTermSelectors();
 setupCustomSidebar();
 setUpCssVariables();
 blockEditorValidation();
+setupTours();
