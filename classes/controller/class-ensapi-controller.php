@@ -2,24 +2,24 @@
 /**
  * ENSAPI Controller class
  *
- * @package P4GEN
+ * @package P4GBKS
  */
 
-namespace P4GEN\Controllers;
+namespace P4GBKS\Controllers;
 
 /**
  * Class Ensapi_Controller
  */
 class Ensapi_Controller {
 
-	const ENS_BASE_URL       = 'https://www.e-activist.com/ens/service';
-	const ENS_AUTH_URL       = self::ENS_BASE_URL . '/authenticate';
-	const ENS_SUPPORTER_URL  = self::ENS_BASE_URL . '/supporter';
-	const ENS_PAGES_URL      = self::ENS_BASE_URL . '/page';
-	const ENS_TYPES_DEFAULT  = 'PET';           // Retrieve all petitions by default.
-	const ENS_STATUS_DEFAULT = 'all';
-	const ENS_CACHE_TTL      = 600;             // Time in seconds to cache the response of an ENS api call.
-	const ENS_CALL_TIMEOUT   = 10;              // Seconds after which the api call will timeout if not responded.
+	private const ENS_BASE_URL       = 'https://www.e-activist.com/ens/service';
+	private const ENS_AUTH_URL       = self::ENS_BASE_URL . '/authenticate';
+	private const ENS_SUPPORTER_URL  = self::ENS_BASE_URL . '/supporter';
+	private const ENS_PAGES_URL      = self::ENS_BASE_URL . '/page';
+	private const ENS_TYPES_DEFAULT  = 'PET';           // Retrieve all petitions by default.
+	private const ENS_STATUS_DEFAULT = 'all';
+	private const ENS_CACHE_TTL      = 600;             // Time in seconds to cache the response of an ENS api call.
+	private const ENS_CALL_TIMEOUT   = 10;              // Seconds after which the api call will timeout if not responded.
 
 	/**
 	 * ENS Auth Token for private user.
@@ -99,7 +99,7 @@ class Ensapi_Controller {
 	 *
 	 * @return array Array with data of the retrieved EN pages.
 	 */
-	public function get_pages_by_types_status( $types, $status = 'all' ) : array {
+	public function get_pages_by_types_status( $types, $status = 'all' ): array {
 		$pages = [];
 		if ( $types ) {
 			$params['status'] = $status;
@@ -128,35 +128,37 @@ class Ensapi_Controller {
 	] ) {
 
 		$response['body'] = get_transient( 'ens_pages_response_' . implode( '_', $params ) );
-		if ( ! $response['body'] ) {
-			$url = add_query_arg(
-				[
-					'type'   => strtolower( $params['type'] ),
-					'status' => $params['status'],
-				],
-				self::ENS_PAGES_URL
-			);
-
-			// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
-			$response = wp_safe_remote_get(
-				$url,
-				[
-					'headers' => [
-						'ens-auth-token' => $this->ens_auth_token,
-					],
-					'timeout' => self::ENS_CALL_TIMEOUT,
-				]
-			);
-
-			if ( is_wp_error( $response ) ) {
-				return $response->get_error_message() . ' ' . $response->get_error_code();
-
-			} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
-				return $response['response']['message'] . ' ' . $response['response']['code'];         // Authentication failed.
-
-			}
-			set_transient( 'ens_pages_response_' . implode( '_', $params ), $response['body'], self::ENS_CACHE_TTL );
+		if ( $response['body'] ) {
+			return json_decode( $response['body'], true );
 		}
+
+		$url = add_query_arg(
+			[
+				'type'   => strtolower( $params['type'] ),
+				'status' => $params['status'],
+			],
+			self::ENS_PAGES_URL
+		);
+
+		// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
+		$response = wp_safe_remote_get(
+			$url,
+			[
+				'headers' => [
+					'ens-auth-token' => $this->ens_auth_token,
+				],
+				'timeout' => self::ENS_CALL_TIMEOUT,
+			]
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message() . ' ' . $response->get_error_code();
+
+		} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
+			return $response['response']['message'] . ' ' . $response['response']['code'];         // Authentication failed.
+
+		}
+		set_transient( 'ens_pages_response_' . implode( '_', $params ), $response['body'], self::ENS_CACHE_TTL );
 
 		return json_decode( $response['body'], true );
 	}
@@ -232,30 +234,33 @@ class Ensapi_Controller {
 	 */
 	public function get_supporter_fields() {
 		$response['body'] = get_transient( 'ens_supporter_fields_response' );
-		if ( ! $response['body'] ) {
-			$url = self::ENS_SUPPORTER_URL . '/fields';
-
-			// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
-			$response = wp_safe_remote_get(
-				$url,
-				[
-					'headers' => [
-						'ens-auth-token' => $this->ens_auth_token,
-						'Content-Type'   => 'application/json; charset=UTF-8',
-					],
-					'timeout' => self::ENS_CALL_TIMEOUT,
-				]
-			);
-
-			// Authentication failure.
-			if ( is_wp_error( $response ) ) {
-				return $response->get_error_message() . ' ' . $response->get_error_code();
-
-			} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
-				return $response['response']['message'] . ' ' . $response['response']['code'];
-			}
-			set_transient( 'ens_supporter_fields_response', (string) $response['body'], self::ENS_CACHE_TTL );
+		if ( $response['body'] ) {
+			return json_decode( $response['body'], true );
 		}
+
+		$url = self::ENS_SUPPORTER_URL . '/fields';
+
+		// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
+		$response = wp_safe_remote_get(
+			$url,
+			[
+				'headers' => [
+					'ens-auth-token' => $this->ens_auth_token,
+					'Content-Type'   => 'application/json; charset=UTF-8',
+				],
+				'timeout' => self::ENS_CALL_TIMEOUT,
+			]
+		);
+
+		// Authentication failure.
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message() . ' ' . $response->get_error_code();
+
+		} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
+			return $response['response']['message'] . ' ' . $response['response']['code'];
+		}
+		set_transient( 'ens_supporter_fields_response', (string) $response['body'], self::ENS_CACHE_TTL );
+
 		return json_decode( $response['body'], true );
 	}
 
@@ -266,30 +271,33 @@ class Ensapi_Controller {
 	 */
 	public function get_supporter_questions() {
 		$response['body'] = get_transient( 'ens_supporter_questions_response' );
-		if ( ! $response['body'] ) {
-			$url = self::ENS_SUPPORTER_URL . '/questions';
-
-			// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
-			$response = wp_safe_remote_get(
-				$url,
-				[
-					'headers' => [
-						'ens-auth-token' => $this->ens_auth_token,
-						'Content-Type'   => 'application/json; charset=UTF-8',
-					],
-					'timeout' => self::ENS_CALL_TIMEOUT,
-				]
-			);
-
-			// Authentication failure.
-			if ( is_wp_error( $response ) ) {
-				return $response->get_error_message() . ' ' . $response->get_error_code();
-
-			} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
-				return $response['response']['message'] . ' ' . $response['response']['code'];
-			}
-			set_transient( 'ens_supporter_questions_response', (string) $response['body'], self::ENS_CACHE_TTL );
+		if ( $response['body'] ) {
+			return json_decode( $response['body'], true );
 		}
+
+		$url = self::ENS_SUPPORTER_URL . '/questions';
+
+		// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
+		$response = wp_safe_remote_get(
+			$url,
+			[
+				'headers' => [
+					'ens-auth-token' => $this->ens_auth_token,
+					'Content-Type'   => 'application/json; charset=UTF-8',
+				],
+				'timeout' => self::ENS_CALL_TIMEOUT,
+			]
+		);
+
+		// Authentication failure.
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message() . ' ' . $response->get_error_code();
+
+		} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
+			return $response['response']['message'] . ' ' . $response['response']['code'];
+		}
+		set_transient( 'ens_supporter_questions_response', (string) $response['body'], self::ENS_CACHE_TTL );
+
 		return json_decode( $response['body'], true );
 	}
 
@@ -302,30 +310,33 @@ class Ensapi_Controller {
 	 */
 	public function get_supporter_question_by_id( $question_id ) {
 		$response['body'] = get_transient( 'ens_supporter_question_by_id_response_' . $question_id );
-		if ( ! $response['body'] ) {
-			$url = self::ENS_SUPPORTER_URL . '/questions/' . $question_id;
-
-			// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
-			$response = wp_safe_remote_get(
-				$url,
-				[
-					'headers' => [
-						'ens-auth-token' => $this->ens_auth_token,
-						'Content-Type'   => 'application/json; charset=UTF-8',
-					],
-					'timeout' => self::ENS_CALL_TIMEOUT,
-				]
-			);
-
-			// Authentication failure.
-			if ( is_wp_error( $response ) ) {
-				return $response->get_error_message() . ' ' . $response->get_error_code();
-
-			} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
-				return $response['response']['message'] . ' ' . $response['response']['code'];
-			}
-			set_transient( 'ens_supporter_question_by_id_response_' . $question_id, (string) $response['body'], self::ENS_CACHE_TTL );
+		if ( $response['body'] ) {
+			return json_decode( $response['body'], true );
 		}
+
+		$url = self::ENS_SUPPORTER_URL . '/questions/' . $question_id;
+
+		// With the safe version of wp_remote_{VERB) functions, the URL is validated to avoid redirection and request forgery attacks.
+		$response = wp_safe_remote_get(
+			$url,
+			[
+				'headers' => [
+					'ens-auth-token' => $this->ens_auth_token,
+					'Content-Type'   => 'application/json; charset=UTF-8',
+				],
+				'timeout' => self::ENS_CALL_TIMEOUT,
+			]
+		);
+
+		// Authentication failure.
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message() . ' ' . $response->get_error_code();
+
+		} elseif ( is_array( $response ) && \WP_Http::OK !== $response['response']['code'] ) {
+			return $response['response']['message'] . ' ' . $response['response']['code'];
+		}
+		set_transient( 'ens_supporter_question_by_id_response_' . $question_id, (string) $response['body'], self::ENS_CACHE_TTL );
+
 		return json_decode( $response['body'], true );
 	}
 

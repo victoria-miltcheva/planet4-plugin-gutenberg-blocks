@@ -2,10 +2,10 @@
 /**
  * Questions model class
  *
- * @package P4GEN
+ * @package P4GBKS
  */
 
-namespace P4GEN\Model;
+namespace P4GBKS\Model;
 
 /**
  * Class Questions_Model
@@ -27,7 +27,7 @@ class Questions_Model extends Model {
 	 *
 	 * @return array
 	 */
-	public function get_question( $id ) {
+	public function get_question( $id ): array {
 		$options = get_option( $this->questions_option );
 
 		if ( isset( $options['questions'] ) && ! empty( $options['questions'] ) ) {
@@ -61,7 +61,7 @@ class Questions_Model extends Model {
 	 *
 	 * @return bool
 	 */
-	public function add_question( $question ) {
+	public function add_question( $question ): bool {
 
 		$options = get_option( $this->questions_option );      // Added default value for the first time.
 		if ( is_array( $options ) || false === $options ) {
@@ -82,7 +82,7 @@ class Questions_Model extends Model {
 	 *
 	 * @return bool
 	 */
-	public function update_question( $question ) {
+	public function update_question( $question ): bool {
 		$options = get_option( $this->questions_option );
 
 		if ( is_array( $options ) ) {
@@ -113,7 +113,7 @@ class Questions_Model extends Model {
 	 *
 	 * @return bool
 	 */
-	public function delete_question( $id ) {
+	public function delete_question( $id ): bool {
 		$options = get_option( $this->questions_option );
 		if ( is_array( $options ) ) {
 			$questions = $options;

@@ -2,10 +2,10 @@
 /**
  * Question Settings Controller
  *
- * @package P4GEN\Controllers
+ * @package P4GBKS\Controllers
  */
 
-namespace P4GEN\Controllers\Menu;
+namespace P4GBKS\Controllers\Menu;
 
 /**
  * Class Questions_Settings_Controller
@@ -28,7 +28,7 @@ class Questions_Settings_Controller extends Controller {
 
 		wp_register_script(
 			'en-app',
-			P4GEN_ADMIN_DIR . '/js/en_app.js',
+			P4GBKS_ADMIN_DIR . '/js/en_app.js',
 			[
 				'jquery',
 				'wp-api',

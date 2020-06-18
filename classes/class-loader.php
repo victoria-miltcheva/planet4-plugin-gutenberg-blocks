@@ -644,7 +644,7 @@ final class Loader {
 			return [];
 		}
 
-		$pages = [];
+		$pages         = [];
 		$main_settings = get_option( 'p4en_main_settings' );
 
 		if ( isset( $main_settings['p4en_private_api'] ) ) {

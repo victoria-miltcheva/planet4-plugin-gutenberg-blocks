@@ -2,14 +2,14 @@
 /**
  * Enform Post Controller class
  *
- * @package P4GEN\Controllers
+ * @package P4GBKS\Controllers
  */
 
-namespace P4GEN\Controllers\Menu;
+namespace P4GBKS\Controllers\Menu;
 
-use P4GEN\Controllers\Enform_Fields_List_Table;
-use P4GEN\Controllers\Enform_Questions_List_Table;
-use P4GEN\Controllers\Ensapi_Controller as Ensapi;
+use P4GBKS\Controllers\Enform_Fields_List_Table;
+use P4GBKS\Controllers\Enform_Questions_List_Table;
+use P4GBKS\Controllers\Ensapi_Controller as Ensapi;
 
 /**
  * Class Enform_Post_Controller
@@ -22,12 +22,12 @@ class Enform_Post_Controller extends Controller {
 	/**
 	 * Post type name.
 	 */
-	const POST_TYPE = 'p4en_form';
+	public const POST_TYPE = 'p4en_form';
 
 	/**
 	 * Custom meta field where fields configuration is saved to.
 	 */
-	const FIELDS_META = 'p4enform_fields';
+	private const FIELDS_META = 'p4enform_fields';
 
 	/**
 	 * Hooks all the needed functions to load the class.
@@ -67,7 +67,7 @@ class Enform_Post_Controller extends Controller {
 		if ( in_array( 'administrator', $current_user->roles, true ) || in_array( 'editor', $current_user->roles, true ) ) {
 
 			add_submenu_page(
-				P4GEN_PLUGIN_SLUG_NAME,
+				P4GBKS_EN_SLUG_NAME,
 				__( 'All EN Forms', 'planet4-engagingnetworks-backend' ),
 				__( 'All EN Forms', 'planet4-engagingnetworks-backend' ),
 				'edit_posts',
@@ -75,7 +75,7 @@ class Enform_Post_Controller extends Controller {
 			);
 
 			add_submenu_page(
-				P4GEN_PLUGIN_SLUG_NAME,
+				P4GBKS_EN_SLUG_NAME,
 				__( 'Add New', 'planet4-engagingnetworks-backend' ),
 				__( 'Add New', 'planet4-engagingnetworks-backend' ),
 				'edit_posts',
@@ -149,7 +149,7 @@ class Enform_Post_Controller extends Controller {
 	 *
 	 * @return array  The filtered actions array.
 	 */
-	public function modify_post_row_actions( $actions, $post ) {
+	public function modify_post_row_actions( $actions, $post ): array {
 
 		// Check if post is of p4en_form_post type.
 		if ( self::POST_TYPE === $post->post_type ) {
@@ -376,10 +376,10 @@ class Enform_Post_Controller extends Controller {
 		wp_enqueue_script( 'jquery-ui-dialog' );
 		wp_enqueue_script( 'jquery-ui-tooltip' );
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
-		wp_enqueue_style( 'p4en_admin_style_blocks', P4GEN_ADMIN_DIR . 'css/admin_en.css', [], '0.1' );
+		wp_enqueue_style( 'p4en_admin_style_blocks', P4GBKS_ADMIN_DIR . 'css/admin_en.css', [], '0.1' );
 		wp_enqueue_script(
 			'enforms',
-			P4GEN_ADMIN_DIR . 'js/enforms.js',
+			P4GBKS_ADMIN_DIR . 'js/enforms.js',
 			[
 				'jquery',
 				'wp-backbone',

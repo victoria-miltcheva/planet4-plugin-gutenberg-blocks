@@ -1,11 +1,11 @@
 <?php
 /**
- * Fields Settings Controller class.
+ * EN Fields Settings Controller class.
  *
- * @package P4GEN\Controllers
+ * @package P4GBKS\Controllers
  */
 
-namespace P4GEN\Controllers\Menu;
+namespace P4GBKS\Controllers\Menu;
 
 /**
  * Class Fields_Settings_Controller
@@ -19,7 +19,7 @@ class Fields_Settings_Controller extends Controller {
 
 		if ( current_user_can( 'manage_options' ) ) {
 			add_submenu_page(
-				P4GEN_PLUGIN_SLUG_NAME,
+				P4GBKS_EN_SLUG_NAME,
 				__( 'Field Settings', 'planet4-engagingnetworks-backend' ),
 				__( 'Field Settings', 'planet4-engagingnetworks-backend' ),
 				'manage_options',
@@ -38,7 +38,7 @@ class Fields_Settings_Controller extends Controller {
 
 		wp_register_script(
 			'en-app',
-			P4GEN_ADMIN_DIR . '/js/en_app.js',
+			P4GBKS_ADMIN_DIR . '/js/en_app.js',
 			[
 				'jquery',
 				'wp-api',

@@ -1,13 +1,13 @@
 <?php
 /**
- * Pages Datatable Controller
+ * EN Pages Datatable Controller
  *
- * @package P4GEN\Controllers
+ * @package P4GBKS\Controllers
  */
 
-namespace P4GEN\Controllers\Menu;
+namespace P4GBKS\Controllers\Menu;
 
-use P4GEN\Controllers\Ensapi_Controller;
+use P4GBKS\Controllers\Ensapi_Controller;
 
 /**
  * Class Pages_Datatable_Controller
@@ -61,7 +61,7 @@ class Pages_Datatable_Controller extends Controller {
 
 		if ( in_array( 'administrator', $current_user->roles, true ) || in_array( 'editor', $current_user->roles, true ) ) {
 			add_submenu_page(
-				P4GEN_PLUGIN_SLUG_NAME,
+				P4GBKS_EN_SLUG_NAME,
 				__( 'EN Pages', 'planet4-engagingnetworks-backend' ),
 				__( 'EN Pages', 'planet4-engagingnetworks-backend' ),
 				'edit_pages',

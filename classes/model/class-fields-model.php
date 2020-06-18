@@ -2,10 +2,10 @@
 /**
  * Fields model
  *
- * @package P4GEN
+ * @package P4GBKS
  */
 
-namespace P4GEN\Model;
+namespace P4GBKS\Model;
 
 /**
  * Class Fields_Model
@@ -26,7 +26,7 @@ class Fields_Model extends Model {
 	 *
 	 * @return array
 	 */
-	public function get_field( $id ) {
+	public function get_field( $id ): array {
 		$options = get_option( $this->fields_option );
 
 		if ( isset( $options['fields'] ) && ! empty( $options['fields'] ) ) {
@@ -46,7 +46,7 @@ class Fields_Model extends Model {
 	 *
 	 * @return array
 	 */
-	public function get_fields() : array {
+	public function get_fields(): array {
 		$options = get_option( $this->fields_option );
 		$fields  = $options ? array_values( $options ) : [];
 		return $fields;
@@ -59,7 +59,7 @@ class Fields_Model extends Model {
 	 *
 	 * @return bool
 	 */
-	public function add_field( $field ) {
+	public function add_field( $field ): bool {
 
 		$options = get_option( $this->fields_option );      // Added default value for the first time.
 		if ( is_array( $options ) || false === $options ) {
@@ -80,7 +80,7 @@ class Fields_Model extends Model {
 	 *
 	 * @return bool
 	 */
-	public function update_field( $field ) {
+	public function update_field( $field ): bool {
 		$options = get_option( $this->fields_option );
 
 		if ( is_array( $options ) ) {
@@ -111,7 +111,7 @@ class Fields_Model extends Model {
 	 *
 	 * @return bool
 	 */
-	public function delete_field( $id ) {
+	public function delete_field( $id ): bool {
 		$options = get_option( $this->fields_option );
 		if ( is_array( $options ) ) {
 			$fields  = $options;

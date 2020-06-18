@@ -2,10 +2,10 @@
 /**
  * Model class
  *
- * @package P4GEN
+ * @package P4GBKS
  */
 
-namespace P4GEN\Model;
+namespace P4GBKS\Model;
 
 /**
  * Class Model
