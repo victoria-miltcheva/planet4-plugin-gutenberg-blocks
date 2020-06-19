@@ -27,7 +27,7 @@
 					</svg>
 				{% endif %}
 
-				<div class="counter-text {{ 100 <= fields.percent ? 'counter-text-goal_reached' }}">
+				<div role="text" class="counter-text {{ 100 <= fields.percent ? 'counter-text-goal_reached' }}">
 					{{ fields.text|replace( {
 						'%completed%': '<span class="counter-target">' ~ fields.completed ~ '</span>',
 						'%target%':    '<span class="counter-target">' ~ fields.target ~ '</span>',
