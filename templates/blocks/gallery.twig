@@ -25,7 +25,7 @@
 						</ol>
 					{% endif %}
 
-					<div class="carousel-inner" role="listbox">
+					<div class="carousel-inner" role="listbox" aria-live="off" aria-label="{{ __( 'This is an image Carousel, interact with it to browse through the slides.' ) }}">
 						{% if images|length > 1 %}
 							<a class="carousel-control-prev" href="#{{ id }}" role="button" data-slide="prev">
 								<span class="carousel-control-prev-icon" aria-hidden="true"><i></i></span>
@@ -34,7 +34,7 @@
 						{% endif %}
 
 						{% for key,single_image in images %}
-							<div class="carousel-item {% if key == 0 %}active{% endif %}">
+							<div class="carousel-item {% if key == 0 %}active{% endif %}" aria-role="option">
 								<img
 									{% if ( loop.first ) %}
 										src="{{ single_image.image_src }}"
@@ -47,7 +47,7 @@
 										class="preload"
 									{% endif %}
 									 style="object-position: {{ single_image.focus_image }}"
-									 alt="{{ single_image.alt_text }}">
+									 alt="{{ __( 'Picture' ) }}: {{ single_image.alt_text }}">
 
 								{% if ( single_image.caption or single_image.credits ) %}
 									<div class="carousel-caption">
@@ -110,7 +110,7 @@
 												class="lazyload"
 											{% endif %}
 											style="object-position:{{ single_image.focus_image }};"
-											alt="{{ single_image.alt_text }}" class="img_{{ post_type }}">
+											alt="{{ __( 'Picture' ) }}: {{ single_image.alt_text }}" class="img_{{ post_type }}">
 									{% endif %}
 								</div>
 							</div>
@@ -148,7 +148,7 @@
 										class="lazyload"
 									{% endif %}
 									style="object-position: {{ single_image.focus_image }};"
-									alt="{{ single_image.alt_text }}">
+									alt="{{ __( 'Picture' ) }}: {{ single_image.alt_text }}">
 							</div>
 						{% endfor %}
 					</div>
