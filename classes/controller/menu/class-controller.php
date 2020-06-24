@@ -72,10 +72,8 @@ if ( ! class_exists( 'Controller' ) ) {
 		public function valitize( $settings ): array {
 			if ( $this->validate( $settings ) ) {
 				$this->sanitize( $settings );
-				return $settings;
-			} else {
-				return $settings;
 			}
+			return $settings;
 		}
 
 		/**

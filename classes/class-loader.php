@@ -8,7 +8,6 @@
 
 namespace P4GBKS;
 
-use P4GBKS\Blocks\ENForm;
 use WP_CLI;
 use P4GBKS\Command\Controller;
 use P4GBKS\Controllers\Ensapi_Controller as Ensapi;
@@ -115,7 +114,7 @@ final class Loader {
 			new Blocks\TakeActionBoxout(),
 			new Blocks\Timeline(),
 			new Blocks\SocialMediaCards(),
-			new Blocks\ENForm( $this ),
+			new Blocks\ENForm(),
 		];
 	}
 
@@ -350,8 +349,8 @@ final class Loader {
 
 		$reflection_vars = [
 			'home'  => P4GBKS_PLUGIN_URL . '/public/',
-			'pages' => $this->get_pages(),
-			'forms' => $this->get_forms(),
+			'pages' => $this->get_en_pages(),
+			'forms' => $this->get_en_forms(),
 		];
 		wp_localize_script( 'planet4-blocks-script', 'p4en_vars', $reflection_vars );
 	}
@@ -624,13 +623,12 @@ final class Loader {
 		string $rel_path,
 		array $deps = [],
 		bool $in_footer = true
-	): void
-	{
+	): void {
 		wp_enqueue_script(
 			$handle,
-			trailingslashit(P4GBKS_PLUGIN_URL) . $rel_path,
+			trailingslashit( P4GBKS_PLUGIN_URL ) . $rel_path,
 			$deps,
-			self::file_ver(trailingslashit(P4GBKS_PLUGIN_DIR) . $rel_path),
+			self::file_ver( trailingslashit( P4GBKS_PLUGIN_DIR ) . $rel_path ),
 			$in_footer
 		);
 	}
@@ -638,7 +636,7 @@ final class Loader {
 	/**
 	 * Get all available EN pages.
 	 */
-	public function get_pages() {
+	public function get_en_pages() {
 		// Get EN pages only on admin panel.
 		if ( ! is_admin() ) {
 			return [];
@@ -666,7 +664,7 @@ final class Loader {
 	/**
 	 * Get all available EN forms.
 	 */
-	public function get_forms() {
+	public function get_en_forms() {
 		// Get EN Forms.
 		$query = new \WP_Query(
 			[

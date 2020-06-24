@@ -108,6 +108,7 @@ class Enform_Fields_List_Table extends \WP_List_Table {
 			case 'tag':
 				return $item[ $column_name ];
 		}
+		return '';
 	}
 
 	/**
