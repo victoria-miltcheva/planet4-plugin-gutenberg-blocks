@@ -36,16 +36,14 @@ class Fields_Settings_Controller extends Controller {
 
 		add_action( 'admin_print_footer_scripts', [ $this, 'print_admin_footer_scripts' ], 1 );
 
-		wp_register_script(
+		\P4GBKS\Loader::enqueue_local_script(
 			'en-app',
-			P4GBKS_ADMIN_DIR . '/js/en_app.js',
+			'admin/js/en_app.js',
 			[
 				'jquery',
 				'wp-api',
 				'wp-backbone',
-			],
-			'0.1',
-			true
+			]
 		);
 		wp_localize_script(
 			'en-app',
@@ -55,7 +53,6 @@ class Fields_Settings_Controller extends Controller {
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 			]
 		);
-		wp_enqueue_script( 'en-app' );
 
 		$data = [
 			'messages' => $this->messages,

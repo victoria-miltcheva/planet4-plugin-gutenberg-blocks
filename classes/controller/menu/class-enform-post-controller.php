@@ -376,16 +376,14 @@ class Enform_Post_Controller extends Controller {
 		wp_enqueue_script( 'jquery-ui-dialog' );
 		wp_enqueue_script( 'jquery-ui-tooltip' );
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
-		wp_enqueue_style( 'p4en_admin_style_blocks', P4GBKS_ADMIN_DIR . 'css/admin_en.css', [], '0.1' );
-		wp_enqueue_script(
+		wp_enqueue_style( 'p4en_admin_style_blocks', P4GBKS_ADMIN_DIR . 'css/admin_en.css', [], \P4GBKS\Loader::file_ver( P4GBKS_PLUGIN_DIR . '/admin/css/admin_en.css' ) );
+		\P4GBKS\Loader::enqueue_local_script(
 			'enforms',
-			P4GBKS_ADMIN_DIR . 'js/enforms.js',
+			'admin/js/enforms.js',
 			[
 				'jquery',
 				'wp-backbone',
-			],
-			'0.8.5',
-			true
+			]
 		);
 	}
 

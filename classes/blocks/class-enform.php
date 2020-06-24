@@ -344,39 +344,31 @@ class ENForm extends Base_Block {
 	 */
 	public function enqueue_public_assets() {
 		// EN-blocks assets.
-		$js_blocks_creation = filectime( P4GBKS_PLUGIN_DIR . '/public/js/enform_side_style.js' );
-
-		wp_register_script(
+		\P4GBKS\Loader::enqueue_local_script(
 			'engagingnetworks-submit',
-			plugins_url( P4GBKS_PLUGIN_DIRNAME ) . '/public/js/enform_submit.js',
+			'/public/js/enform_submit.js',
 			[
 				'jquery',
 				'main',
-			],
-			$js_blocks_creation,
-			true
+			]
 		);
 
-		wp_register_script(
+		\P4GBKS\Loader::enqueue_local_script(
 			'engagingnetworks-dependency',
-			plugins_url( P4GBKS_PLUGIN_DIRNAME ) . '/public/js/enform_dependency.js',
+			'/public/js/enform_dependency.js',
 			[
 				'jquery',
 				'main',
-			],
-			$js_blocks_creation,
-			true
+			]
 		);
 
-		wp_register_script(
+		\P4GBKS\Loader::enqueue_local_script(
 			'engagingnetworks-side-style',
-			plugins_url( P4GBKS_PLUGIN_DIRNAME ) . '/public/js/enform_side_style.js',
+			'/public/js/enform_side_style.js',
 			[
 				'jquery',
 				'main',
-			],
-			$js_blocks_creation,
-			true
+			]
 		);
 
 		wp_localize_script(
@@ -394,10 +386,5 @@ class ENForm extends Base_Block {
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			]
 		);
-
-		wp_enqueue_script( 'engagingnetworks-submit' );
-		wp_enqueue_script( 'engagingnetworks-dependency' );
-		wp_enqueue_script( 'engagingnetworks-side-style' );
-		wp_enqueue_script( 'engagingnetworks' );
 	}
 }
