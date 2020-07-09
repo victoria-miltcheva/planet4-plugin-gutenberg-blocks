@@ -10,7 +10,7 @@ export class URLInput extends Component {
   render() {
 
     const {__} = wp.i18n;
-    const { label, placeholder, value, onChange, disabled, help } = this.props
+    const { label, placeholder, value, onChange, disabled, help, ...otherProps } = this.props
 
     return (
       <div>
@@ -21,6 +21,7 @@ export class URLInput extends Component {
             onChange={onChange}
             disabled={disabled}
             help={help}
+            { ...otherProps }
           />
           <URLValidationMessage
             url={value}

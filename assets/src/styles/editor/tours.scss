@@ -2,6 +2,14 @@ body .shepherd-target {
   border: 2px solid yellow !important;
 }
 
+body.shepherd-target {
+  overflow: hidden;
+}
+
+.shepherd-modal-overlay-container {
+  display: none !important;
+}
+
 .editor-tour {
   min-width: 30vw;
 

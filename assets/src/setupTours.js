@@ -19,7 +19,7 @@ const nextButton = {
 const steps = [
   {
     title: 'Welcome to the Block Editor!',
-    text: `<p>It's easy to get lost in all these features.</p>
+    text: `<p>It's easy to get lost in so many features.</p>
 
     <p>So let us show you around...</p>`,
     buttons: [

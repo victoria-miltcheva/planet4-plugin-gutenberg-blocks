@@ -2,7 +2,8 @@ import { Component, Fragment } from '@wordpress/element';
 import {
   CheckboxControl,
   TextControl as BaseTextControl,
-  PanelBody
+  PanelBody,
+  Icon
 } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import withCharacterCounter from '../../components/withCharacterCounter/withCharacterCounter';
@@ -11,6 +12,7 @@ import PostSelector from '../../components/PostSelector/PostSelector';
 import PostTypeSelector from '../../components/PostTypeSelector/PostTypeSelector';
 import { URLInput } from "../../components/URLInput/URLInput";
 import { ArticlesFrontend } from "./ArticlesFrontend";
+import { doTour } from './doTour';
 
 const { RichText } = wp.blockEditor;
 const { __ } = wp.i18n;
@@ -37,8 +39,14 @@ export class ArticlesEditor extends Component {
     return (
       <Fragment>
         <InspectorControls>
+          <button
+            style={ { float: 'right', border: 'none'}}
+            onClick={ doTour }>
+            <Icon icon="info" />
+          </button>
           <PanelBody title={__('Setting', 'p4ge')}>
             <URLInput
+              className={ 'block-articles-read-more-link' }
               label={__('Button Link', 'p4ge')}
               value={attributes.read_more_link}
               onChange={this.toAttribute('read_more_link')}
@@ -53,6 +61,7 @@ export class ArticlesEditor extends Component {
             {attributes.posts !== 'undefined' && attributes.posts.length === 0 &&
               <Fragment>
                 <TextControl
+                  className={ 'block-articles-article-count' }
                   label={__('Articles count', 'p4ge')}
                   help={__('Number of articles', 'p4ge')}
                   type="number"
