@@ -8,12 +8,12 @@ export const blockEditorValidation = () => {
 };
 
 const isValid = element => {
-  // Apply validation only for campaign post types.
-  if ('campaign' === $('#post_type').val() && 'required' === $(element).data('validation')) {
-    if (!$(element).val() || 'not set' === $(element).val()) {
-      return false;
-    }
-  }
+  // // Apply validation only for campaign post types.
+  // if ('campaign' === $('#post_type').val() && 'required' === $(element).data('validation')) {
+  //   if (!$(element).val() || 'not set' === $(element).val()) {
+  //     return false;
+  //   }
+  // }
 
   return true;
 };

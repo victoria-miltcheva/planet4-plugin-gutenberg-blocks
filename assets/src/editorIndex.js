@@ -24,6 +24,7 @@ import { setUpCssVariables } from './connectCssVariables';
 import { SubPagesBlock } from './blocks/SubPages/SubPagesBlock';
 import { blockEditorValidation } from './BlockEditorValidation';
 import { ENFormBlock } from './blocks/ENForm/ENFormBlock';
+import { wysiwygCssVars } from './wysiwygCssVars';
 
 new ArticlesBlock();
 new CarouselHeaderBlock();
@@ -52,3 +53,4 @@ replaceTaxonomyTermSelectors();
 setupCustomSidebar();
 setUpCssVariables();
 blockEditorValidation();
+wysiwygCssVars();
