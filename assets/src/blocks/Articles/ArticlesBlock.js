@@ -94,6 +94,12 @@ export class ArticlesBlock {
       attributes: {
         article_heading: {
           type: 'string',
+          validation: value => {
+            if ( value === 'invalid' ) {
+              return {isValid: false, messages: ['It should not be invalid.']}
+            }
+            return { isValid: true };
+          },
         },
         articles_description: {
           type: 'string',
