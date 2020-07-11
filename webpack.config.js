@@ -51,8 +51,8 @@ module.exports = {
             options: {
               ident: 'postcss',
               plugins: () => [
-                require('autoprefixer'),
                 cssVariables( { preserve: true, exportVarUsagesTo: allCssVars } ),
+                require('autoprefixer'),
               ],
               sourceMap: true
             }
@@ -118,7 +118,8 @@ module.exports = {
           // We use postcss to get the selector and resolved default value. For the original file and line number
           // we use a separate scripts which loops through all scss files. Only variables that are in the final css
           // are included.
-          const mergedUsages = mergeVarUsages( allCssVars, collectVarUsages( './assets/src' ) );
+          const scssUsages = collectVarUsages( './assets/src' );
+          const mergedUsages = mergeVarUsages( allCssVars, scssUsages );
           fs.writeFile(
             './assets/build/css_vars_merged.json',
             JSON.stringify( mergedUsages, null, 2 ),
