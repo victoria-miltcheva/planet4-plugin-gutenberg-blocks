@@ -409,7 +409,7 @@ $medium-image-height: 600px;
         }
 
         h1 {
-          font-size: 1.62rem;
+          font-size: var(--carousel-header-full-width-h1-font-size, 1.62rem);
           margin-bottom: 18px;
           line-height: 1.2;
 
@@ -419,11 +419,11 @@ $medium-image-height: 600px;
           }
 
           @include small-and-up {
-            font-size: $font-size-xl;
+            font-size: var(--carousel-header-full-width-h1-font-size-small, $font-size-xl);
           }
 
           @include medium-and-up {
-            font-size: 2.25rem;
+            font-size: var(--carousel-header-full-width-h1-font-size-medium, 2.25rem);
             margin-bottom: 24px;
           }
 
@@ -433,11 +433,11 @@ $medium-image-height: 600px;
             color: $white;
             margin-bottom: 32px;
             line-height: 1.2;
-            font-size: $font-size-xxl;
+            font-size: var(--carousel-header-full-width-h1-font-size-large, $font-size-xxl);
           }
 
           @include x-large-and-up {
-            font-size: $font-size-xxxl;
+            font-size: var(--carousel-header-full-width-h1-font-size-x-large, $font-size-xxxl);
             line-height: 1.1;
             max-width: 100%;
             width: 100%;

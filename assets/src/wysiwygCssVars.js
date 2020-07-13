@@ -1,5 +1,6 @@
 import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './getMatchingVars';
+import { dragElement } from './dragElement';
 
 const style = document.createElement('link')
 
@@ -22,6 +23,7 @@ const getVars = async (url) => {
 const editorRoot = document.createElement( 'div' );
 editorRoot.id = 'theme-editor-root';
 document.body.appendChild( editorRoot );
+dragElement( editorRoot );
 
 const setup = async () => {
   try {

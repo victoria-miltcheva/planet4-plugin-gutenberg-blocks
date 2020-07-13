@@ -37,6 +37,7 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
             onChange={ value => {
               onChange( `${ value }px` );
             } }
+            style={{minWidth: '100px'}}
           />
           <span style={{float: 'right'}}>px</span>
         </div>
@@ -46,6 +47,7 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
             onChange={ value => {
               onChange(`${value}rem`);
             } }
+            style={{minWidth: '100px'}}
           />
           <span style={{float: 'right'}}>rem</span>
         </div>

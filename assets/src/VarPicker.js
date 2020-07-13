@@ -1,7 +1,6 @@
 import { Fragment, Component } from '@wordpress/element';
 import { renderControl } from './renderControl';
 import { IconButton } from '@wordpress/components';
-import classnames from 'classnames';
 
 const uniqueUsages = cssVar => {
   return [
@@ -12,6 +11,8 @@ const uniqueUsages = cssVar => {
     )
   ];
 };
+
+const uniqueProperties = cssVar => [ ...new Set( cssVar.usages.map( usage => usage.property ) ) ];
 
 const readProperty = name => {
   const value = document.documentElement.style.getPropertyValue( name )
@@ -25,7 +26,7 @@ export class VarPicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      changingPropertyTo: null,
+      changingPropertyTo: {},
       activeVars: this.props.selectedVars,
       openVars: [  ],
       infoOpenVars: [],
@@ -51,13 +52,19 @@ export class VarPicker extends Component {
   }
 
   setProperty( name, value ) {
-    this.setState( { changingPropertyTo: value } );
+    const prevChangingTo = this.state.changingPropertyTo
+    this.setState( {
+      changingPropertyTo: {
+        ...this.state.changingPropertyTo,
+        [ name ]: value,
+      }
+    } );
 
     console.log( `Setting property \`${ name }\` to \`${ value }\`` );
 
     document.documentElement.style.setProperty( name, value );
 
-    this.setState({ changingPropertyTo: null})
+    this.setState({ changingPropertyTo: prevChangingTo })
   }
 
   toggleOpenVar( cssVar ) {
@@ -93,48 +100,56 @@ export class VarPicker extends Component {
 
   render() {
     return <div className={'var-picker'} >
+      <span id={'drag-me'} >
+        showing {this.state.activeVars.length} var{ this.state.activeVars.length === 1 ? '' : 's'}
+      </span>
       <ul>
         { this.state.activeVars.map( cssVar => (
           <li key={cssVar.name} style={{position: 'relative', listStyleType: 'none'}}>
             <IconButton
               icon={ 'minus' }
               style={ { float: 'right' } }
-              onClick={ event => this.deactivate( cssVar ) }
+              onClick={ () => this.deactivate( cssVar ) }
             />
             <h5
+              style={ { fontSize: '16px', padding: '4px 7px' } }
               onClick={ () => this.toggleOpenVar( cssVar ) }
             >{cssVar.name.replace(/^--/,'')}</h5>
+            { this.isOpened( cssVar ) && (
+              <Fragment>
             <pre
-              style={{float: 'right', fontSize: '11px', paddingLeft: '8px', backgroundColor: '#eae896'}}
-            >{ [ ...new Set( cssVar.usages.map( usage => usage.property ) ) ].join( ', ' ) }</pre>
-            <div
-              style={{ position: 'relative'}}
-              onClick={ event => this.toggleInfoOpenVar( cssVar ) }
+              style={ { float: 'right', fontSize: '11px', paddingLeft: '8px', backgroundColor: '#eae896' } }
             >
+              { uniqueProperties(cssVar).join( ', ' ) }
+            </pre>
+                <div
+                  style={ { position: 'relative' } }
+                >
                   <pre
-                    className={  this.isInfoOpened( cssVar ) ? 'usages-open' : 'usages-collapsed'  }
+                    className={ this.isInfoOpened( cssVar ) ? 'usages-open' : 'usages-collapsed' }
                     style={ {
                       fontSize: '9px',
                     } }
                   >
-                    { uniqueUsages(cssVar).join('\n').replace(',', ',\n') }
+                    { uniqueUsages( cssVar ).join( '\n' ).replace( ',', ',\n' ) }
                   </pre>
-              <span style={{fontSize: '8px', position: 'absolute', top: -12, left: 0}}>
-                     {uniqueUsages(cssVar).length} selectors
+                  <span
+                    onClick={ () => this.toggleInfoOpenVar( cssVar ) }
+                    style={ { fontSize: '8px', position: 'absolute', top: -12, left: 0 } }
+                  >
+                     { uniqueUsages( cssVar ).length } selectors
                   </span>
-            </div>
-            { this.isOpened( cssVar ) && (
-              <Fragment>
-                { renderControl({
+                </div>
+                { renderControl( {
                   cssVar,
                   value:
-                    this.state.changingPropertyTo
+                    this.state.changingPropertyTo[ cssVar.name ]
                     || readProperty( cssVar.name )
                     || cssVar.usages.find( usage => !!usage.defaultValue ).defaultValue,
                   onChange: value => {
                     this.setProperty( cssVar.name, value );
                   }
-                })}
+                } ) }
               </Fragment>
             )}
           </li>
