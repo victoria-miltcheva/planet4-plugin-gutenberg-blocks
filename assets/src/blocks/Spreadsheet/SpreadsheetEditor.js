@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 
 import { SpreadsheetFrontend } from './SpreadsheetFrontend';
+import { forAttribute } from '../forAttribute';
 
 const colors = [
   { name: 'blue', color: '#c9e7fa' },
@@ -78,10 +79,9 @@ export class SpreadsheetEditor extends Component {
               options= { colors }
             />
             <TextControl
+              { ...forAttribute( 'url', {}, attributes, setAttributes ) }
               label={__('Spreadsheet URL', 'planet4-blocks-backend')}
               placeholder={__('Enter Google Spreadsheet URL', 'planet4-blocks-backend')}
-              value={ attributes.url }
-              onChange={ toAttribute( 'url' ) }
             />
             <div className="sidebar-blocks-help">
               <ul>
