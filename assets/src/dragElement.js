@@ -9,6 +9,7 @@ export const dragElement = (elmnt) => {
   } else {
     // otherwise, move the DIV from anywhere inside the DIV:
     elmnt.onmousedown = dragMouseDown;
+    elmnt.ondragstart = dragMouseDown;
   }
 
   function dragMouseDown(e) {
@@ -21,8 +22,10 @@ export const dragElement = (elmnt) => {
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
+    document.ondragend = closeDragElement;
     // call a function whenever the cursor moves:
     document.onmousemove = elementDrag;
+    document.ondrag = elementDrag;
   }
 
   function elementDrag(e) {

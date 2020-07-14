@@ -1,4 +1,5 @@
 import { ColorPicker, TextControl, FontSizePicker } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 import FontPicker from 'font-picker-react';
 
 const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
@@ -29,7 +30,7 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
     />
   }
 
-  if ( cssVar.usages.some( usage => usage.property === 'font-size' ) ) {
+  if ( cssVar.usages.some( usage => [ 'font-size', 'border', 'border-bottom' ].includes( usage.property ) ) ) {
     return <div>
         <div key={1}>
           <FontSizePicker
@@ -65,8 +66,11 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
   // if ( cssVar.usages.some( usage => usage.property === 'font-weight' ) ) {
   // }
 
-  return <TextControl
-    value={ value }
-    onChange={ onChange }
-  />;
+  return <Fragment>
+    { !isNaN( value ) && <input type={ 'number' } onChange={ onChange } value={ value }/> }
+    <TextControl
+      value={ value }
+      onChange={ onChange }
+    />;
+  </Fragment>
 };
