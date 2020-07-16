@@ -1,6 +1,7 @@
 import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './getMatchingVars';
 import { dragElement } from './dragElement';
+import { STORAGE_KEY } from './VarPicker';
 
 const style = document.createElement('link')
 
@@ -26,6 +27,19 @@ const editorRoot = document.createElement( 'div' );
 editorRoot.id = 'theme-editor-root';
 document.body.appendChild( editorRoot );
 dragElement( editorRoot );
+
+const json = localStorage.getItem( STORAGE_KEY );
+try {
+const storedVars = JSON.parse( json );
+  if ( storedVars ) {
+    Object.keys(storedVars).forEach(name=>{
+      const value = storedVars[ name ];
+      document.documentElement.style.setProperty( name, value );
+    });
+  }
+} catch ( e ) {
+  console.log( json );
+}
 
 const setup = async () => {
   try {

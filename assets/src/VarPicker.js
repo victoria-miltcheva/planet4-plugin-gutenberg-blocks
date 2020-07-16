@@ -1,6 +1,8 @@
 import { Component } from '@wordpress/element';
 import { VariableControl } from './VariableControl';
 
+export const STORAGE_KEY = 'p4-theme';
+
 const readProperty = name => {
   const value = document.documentElement.style.getPropertyValue( name )
 
@@ -60,11 +62,34 @@ export class VarPicker extends Component {
 
     document.documentElement.style.setProperty( name, value );
 
+    let fromStorage;
+    try {
+      fromStorage = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    } catch ( e ) {
+      fromStorage = {};
+    }
+
+    const withNewVar = {
+      ...fromStorage,
+      [name]: value,
+    }
+
+    localStorage.setItem( STORAGE_KEY, JSON.stringify( withNewVar ) );
+
     this.setState({ changingPropertyTo: prevChangingTo })
   }
 
   toggleCollapsed() {
     this.setState({ collapsed: !this.state.collapsed})
+  }
+
+  closeAllButton() {
+    return <span
+      style={ { float: 'right', fontSize: '11px', border: '1px solid black' } }
+      onClick={ () => this.setState( { activeVars: [] } ) }
+    >
+        Close all.
+    </span>;
   }
 
   render() {
@@ -78,6 +103,7 @@ export class VarPicker extends Component {
       >
         { this.state.collapsed ? 'show' : 'hide' }
       </span>
+      { this.state.activeVars.length > 0 && this.closeAllButton()}
       { !this.state.collapsed && <ul>
           { this.state.activeVars.sort( sortVars ).map( cssVar =>
             <VariableControl
