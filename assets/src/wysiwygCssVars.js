@@ -4,9 +4,11 @@ import { dragElement } from './dragElement';
 
 const style = document.createElement('link')
 
+const baseUrl = document.body.dataset.nro;
+
 // todo: load these conditionally when logged in + permission.
-style.href = 'https://www.planet4.test/wp-includes/css/dist/components/style.css?ver=5.4.1';
-style.attributes.href = 'https://www.planet4.test/wp-includes/css/dist/components/style.css?ver=5.4.1';
+style.href = `${baseUrl}/wp-includes/css/dist/components/style.css?ver=5.4.1`;
+style.attributes.href = `${baseUrl}/wp-includes/css/dist/components/style.css?ver=5.4.1`;
 style.rel = 'stylesheet';
 
 document.head.appendChild(style)
@@ -27,8 +29,8 @@ dragElement( editorRoot );
 
 const setup = async () => {
   try {
-    const blockVarsPromise = getVars('https://www.planet4.test/wp-content/plugins/planet4-plugin-gutenberg-blocks/assets/build/css_vars_merged.json')
-    const themeVarsPromise = getVars('https://www.planet4.test/wp-content/themes/planet4-master-theme/assets/build/css_vars_merged.json')
+    const blockVarsPromise = getVars(`${baseUrl}/wp-content/plugins/planet4-plugin-gutenberg-blocks/assets/build/css_vars_merged.json`)
+    const themeVarsPromise = getVars(`${baseUrl}/wp-content/themes/planet4-master-theme/assets/build/css_vars_merged.json`)
 
     const blockVars = await blockVarsPromise;
     const themeVars = await themeVarsPromise;
@@ -58,6 +60,10 @@ const setup = async () => {
       event.preventDefault();
 
       const matchedVars = await getMatchingVars( { cssVars, event } );
+
+      if ( matchedVars.length === 0 ) {
+        return;
+      }
 
       renderSelectedVars( editorRoot, matchedVars );
     } );

@@ -11,6 +11,10 @@ const readProperty = name => {
 
 const sortVars = ( a, b ) => a.name > b.name ? 1 : ( a.name === b.name ? 0 : -1 );
 
+const groupVars = cssVars => cssVars.reduce((grouped, cssVar) => {
+
+}, {})
+
 export class VarPicker extends Component {
   constructor(props) {
     super(props);

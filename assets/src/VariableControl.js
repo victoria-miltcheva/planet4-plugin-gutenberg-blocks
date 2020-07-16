@@ -23,6 +23,8 @@ export class VariableControl extends Component {
     };
     this.toggleSelectors = this.toggleSelectors.bind(this);
     this.toggleOpen = this.toggleOpen.bind(this);
+    this.formatTitle = this.formatTitle.bind(this);
+    this.showUsages = this.showUsages.bind(this);
   }
 
   toggleSelectors() {
@@ -48,6 +50,7 @@ export class VariableControl extends Component {
         } }/>;
     }
     return <span
+      onClick={ this.toggleOpen }
       title={value}
       style={ {
         // width: size,
@@ -65,6 +68,43 @@ export class VariableControl extends Component {
     this.setState( { isOpen: !this.state.isOpen } )
   }
 
+  showUsages() {
+    const renderCollapsed = () => <pre onClick={ this.toggleSelectors } className={'usages-collapsed'}>
+      { uniqueUsages( this.props.cssVar ).join( ', ' ) }
+    </pre>;
+
+    const renderShow = () => <pre onClick={ this.toggleSelectors }>
+        { uniqueUsages( this.props.cssVar ).join( '\n' ).replace( ',', ',\n' ) }
+      </pre>;
+
+    return <div
+      style={ { fontSize: '9px', position: 'relative', marginTop: '16px' } }
+    >
+      <span
+        onClick={ this.toggleSelectors }
+        style={ {
+          userSelect: 'none',
+          fontSize: '8px',
+          position: 'absolute',
+          top: -12,
+          left: 0
+        } }
+      >
+        { uniqueUsages( this.props.cssVar ).length } selectors
+      </span>
+      { this.state.showSelectors ? renderShow() : renderCollapsed() }
+
+    </div>;
+  }
+
+  formatTitle() {
+    const capitalize = string=>string.charAt(0).toUpperCase() + string.slice(1)
+
+    return capitalize(
+      this.props.cssVar.name.replace( /^--/, '' ).replace( /[-_]/g, ' ' )
+    );
+  }
+
   render() {
     const {
       cssVar,
@@ -73,7 +113,7 @@ export class VariableControl extends Component {
       onChange,
     } = this.props;
 
-    return <li key={ cssVar.name } style={ { position: 'relative', listStyleType: 'none' } }>
+    return <li key={ cssVar.name } style={ { userSelect: 'none', position: 'relative', listStyleType: 'none' } }>
       <IconButton
         icon={ 'minus' }
         style={ { float: 'right', height: '29px' } }
@@ -81,46 +121,20 @@ export class VariableControl extends Component {
       />
       { this.previewValue() }
       <h5
-        style={ { fontSize: '16px', padding: '4px 7px' } }
+        style={ { fontSize: '16px', padding: '2px 4px 0', userSelect: 'text'  } }
         onClick={ this.toggleOpen }
-      >{ cssVar.name.replace( /^--/, '' ).replace( /[-_]/g, ' ' ) }</h5>
+      >
+        {this.formatTitle()}
+      </h5>
       { this.state.isOpen && (
         <Fragment>
-            <pre
-              style={ { float: 'right', fontSize: '11px', paddingLeft: '8px', backgroundColor: '#eae896' } }
-            >
+          { this.showUsages() }
+          <pre
+            style={ { float: 'right', fontSize: '11px', paddingLeft: '8px', backgroundColor: '#eae896' } }
+          >
               { uniqueProperties( cssVar ).join( ', ' ) }
             </pre>
-          <div
-            style={ { position: 'relative' } }
-          >
-            <pre
-              className={
-                this.state.showSelectors ? 'usages-open' : 'usages-collapsed'
-              }
-              style={ {
-                fontSize: '9px',
-              } }
-            >
-              { uniqueUsages( cssVar ).join( '\n' ).replace( ',', ',\n' ) }
-            </pre>
-            <span
-              onClick={ this.toggleSelectors  }
-              style={ {
-                fontSize: '8px',
-                position: 'absolute',
-                top: -12,
-                left: 0
-              } }
-            >
-              { uniqueUsages( cssVar ).length } selectors
-            </span>
-          </div>
-          { renderControl( {
-            cssVar,
-            value,
-            onChange
-          } ) }
+          { renderControl( { cssVar, value, onChange } ) }
         </Fragment>
       ) }
     </li>;

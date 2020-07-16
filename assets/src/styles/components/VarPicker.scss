@@ -1,6 +1,10 @@
 .var-picker {
+}
+
+.var-picker * {
   font-family: Roboto, sans-serif !important;
   color: black !important;
+  line-height: initial !important;
 }
 
 .var-picker > ul  {
@@ -34,12 +38,14 @@
     background: rgba(140, 140, 140, 0.05);
   }
 }
+
 .var-picker > ul > li {
   //max-height: 400px;
-  background: white;
-  border: 2px solid black;
-  margin-bottom: 3px;
-  border-radius: 7px;
+  background: white !important;
+  border: 1px solid black !important;
+  margin-bottom: 3px !important;
+  border-radius: 7px !important;
+  padding: 2px 7px 7px !important;
 
   h5 {
     margin-bottom: 2px;
@@ -66,7 +72,7 @@ div[id^=font-picker] ul {
   //display: none;
   position: fixed;
   top: 64px;
-  left: 400px;
+  left: 50px;
   z-index: 99999999;
 
   #drag-me {

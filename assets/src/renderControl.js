@@ -1,4 +1,4 @@
-import { ColorPicker, TextControl, FontSizePicker } from '@wordpress/components';
+import { ColorPicker, TextControl, FontSizePicker, RangeControl } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import FontPicker from 'font-picker-react';
 
@@ -30,9 +30,10 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
     />
   }
 
-  if ( cssVar.usages.some( usage => [ 'font-size', 'border', 'border-bottom' ].includes( usage.property ) ) ) {
+  if ( cssVar.usages.some( usage => [ 'font-size', 'border', 'border-bottom', 'line-height' ].includes( usage.property ) ) ) {
     return <div>
         <div key={1}>
+          <span>px</span>
           <FontSizePicker
             value={ isPx( value ) ? value.replace('px', '') : convertRemToPixels( parseFloat( value.replace( 'rem', '' ) ) ) }
             onChange={ value => {
@@ -40,17 +41,17 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
             } }
             style={{minWidth: '100px'}}
           />
-          <span style={{float: 'right'}}>px</span>
         </div>
         <div key={2}>
-          <FontSizePicker
+          <span>rem</span>
+          <input
+            type={'number'}
             value={ isRem( value ) ? value.replace('rem', '') : convertPixelsToRem( parseFloat( value.replace( 'px', '' ) ) ) }
-            onChange={ value => {
-              onChange(`${value}rem`);
+            onChange={ event => {
+              onChange(`${event.currentTarget.value}rem`);
             } }
             style={{minWidth: '100px'}}
           />
-          <span style={{float: 'right'}}>rem</span>
         </div>
       </div>
   }
@@ -71,6 +72,6 @@ export const renderControl = ( { cssVar, value, onChange } ) => {
     <TextControl
       value={ value }
       onChange={ onChange }
-    />;
+    />
   </Fragment>
 };

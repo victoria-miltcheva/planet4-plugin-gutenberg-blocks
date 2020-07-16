@@ -8,6 +8,7 @@ const matchVar = async ( cssVar, target ) => {
 
     const shouldIncludeStar = !isBodySelector || ['p', 'body'].includes(target.tagName.toLowerCase());
 
+    // return selector;
     return `${ selector }` + (
       shouldIncludeStar
         ? `, ${ selector } *`
