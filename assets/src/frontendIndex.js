@@ -12,3 +12,5 @@ document.querySelectorAll( `[data-render]` ).forEach(
     wp.element.render( <BlockFrontend { ...attributes.attributes } />, blockNode );
   }
 );
+
+alert('I am a bug!!!');
