@@ -17,6 +17,50 @@ const blockTypesWithHeadings = [
   {name: 'planet4-blocks/articles', fieldName: 'article_heading', level: 2},
 ];
 
+const extractHeaders = (blocks, selectedLevels) => {
+  const headers = [];
+  blocks.forEach(block => {
+    if (block.name === 'core/heading') {
+      const blockLevel = block.attributes.level;
+
+      const levelConfig = selectedLevels.find(selected => selected.heading === blockLevel);
+
+      if (!levelConfig) {
+        return;
+      }
+
+      const anchor = block.attributes.anchor || generateAnchor(block.attributes.content);
+
+      headers.push({
+        level: blockLevel,
+        content: block.attributes.content,
+        anchor,
+        style: levelConfig.style,
+        shouldLink: levelConfig.link,
+      });
+
+      return;
+    }
+
+    const blockType = blockTypesWithHeadings.find(({ name }) => name === block.name);
+
+    if (blockType) {
+      const { fieldName, level } = blockType;
+      const levelConfig = selectedLevels.find(selected => selected.heading === level);
+
+      if (!levelConfig) {
+        return;
+      }
+      headers.push({
+        level,
+        content: block.attributes[fieldName],
+      });
+    }
+  });
+
+  return headers;
+}
+
 const renderEdit = (attributes, setAttributes) => {
   function addLevel() {
     setAttributes({ levels: attributes.levels.concat({ heading: 0, link: false, style: 'none' }) });
@@ -83,47 +127,7 @@ const renderView = (attributes, setAttributes, className) => {
     return ({ blocks: select('core/editor').getBlocks() });
   });
 
-  const { levels: selectedLevels } = attributes
-
-  const flatHeaders = [];
-  blocks.forEach(block => {
-    if (block.name === 'core/heading') {
-      const blockLevel = block.attributes.level
-
-      const levelConfig = selectedLevels.find(selected => selected.heading === blockLevel);
-
-      if (!levelConfig) {
-        return;
-      }
-
-      const anchor = block.attributes.anchor || generateAnchor(block.attributes.content);
-
-      flatHeaders.push({
-        level: blockLevel,
-        content: block.attributes.content,
-        anchor,
-        style: levelConfig.style,
-        shouldLink: levelConfig.link,
-      });
-
-      return;
-    }
-
-    const blockType = blockTypesWithHeadings.find(({ name }) => name === block.name);
-
-    if (blockType) {
-      const { fieldName, level } = blockType;
-      const levelConfig = selectedLevels.find(selected => selected.heading === level);
-
-      if (!levelConfig) {
-        return;
-      }
-      flatHeaders.push({
-        level,
-        content: block.attributes[fieldName],
-      });
-    }
-  });
+  const flatHeaders = extractHeaders(blocks, attributes.levels);
 
   const menuItems = makeHierarchical(flatHeaders);
 
