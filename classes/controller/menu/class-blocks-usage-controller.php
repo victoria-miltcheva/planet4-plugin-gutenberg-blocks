@@ -343,6 +343,7 @@ if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
 			);
 
 			$core_block_types = [
+				'classic',
 				'html',
 				'table',
 				'button',
