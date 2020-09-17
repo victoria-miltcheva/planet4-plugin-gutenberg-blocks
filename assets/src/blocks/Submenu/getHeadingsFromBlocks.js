@@ -1,14 +1,14 @@
 import { generateAnchor } from './generateAnchor';
 
-// We can put the other blocks that can have a header inside in here along with the attribute containing the heading text.
+// We can put the other blocks that can have a heading inside in here along with the attribute containing the heading text.
 // Then we can also filter those to include them in the menu.
 
 const blockTypesWithHeadings = [
   {name: 'planet4-blocks/articles', fieldName: 'article_heading', level: 2},
 ];
 
-export const extractHeaders = (blocks, selectedLevels) => {
-  const headers = [];
+export const getHeadingsFromBlocks = (blocks, selectedLevels) => {
+  const headings = [];
   blocks.forEach(block => {
     if (block.name === 'core/heading') {
       const blockLevel = block.attributes.level;
@@ -21,7 +21,7 @@ export const extractHeaders = (blocks, selectedLevels) => {
 
       const anchor = block.attributes.anchor || generateAnchor(block.attributes.content);
 
-      headers.push({
+      headings.push({
         level: blockLevel,
         content: block.attributes.content,
         anchor,
@@ -39,7 +39,7 @@ export const extractHeaders = (blocks, selectedLevels) => {
 
       const classicHeadings = doc.querySelectorAll(selector);
 
-      headers.push(...[...classicHeadings].map(h => {
+      headings.push(...[...classicHeadings].map(h => {
         const blockLevel = parseInt(h.tagName.replace('H', ''));
         const levelConfig = selectedLevels.find(selected => selected.heading === blockLevel);
 
@@ -64,13 +64,13 @@ export const extractHeaders = (blocks, selectedLevels) => {
       if (!levelConfig) {
         return;
       }
-      headers.push({
+      headings.push({
         level,
         content: block.attributes[fieldName],
       });
     }
   });
 
-  return headers;
+  return headings;
 }
 
