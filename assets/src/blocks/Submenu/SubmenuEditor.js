@@ -5,7 +5,7 @@ import { SubmenuItems } from './SubmenuItems';
 import { InspectorControls } from '@wordpress/block-editor';
 import { getSubmenuStyle } from './getSubmenuStyle';
 import { makeHierarchical } from './makeHierarchical';
-import { extractHeaders} from './extractHeaders';
+import { getHeadingsFromBlocks} from './getHeadingsFromBlocks';
 import { useSelect } from '@wordpress/data';
 
 const { __ } = wp.i18n;
@@ -76,9 +76,9 @@ const renderView = (attributes, setAttributes, className) => {
     return ({ blocks: select('core/editor').getBlocks() });
   });
 
-  const flatHeaders = extractHeaders(blocks, attributes.levels);
+  const flatHeadings = getHeadingsFromBlocks(blocks, attributes.levels);
 
-  const menuItems = makeHierarchical(flatHeaders);
+  const menuItems = makeHierarchical(flatHeadings);
 
   const style = getSubmenuStyle(className, attributes.submenu_style);
 
