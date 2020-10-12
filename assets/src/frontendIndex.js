@@ -16,34 +16,34 @@ const COMPONENTS = {
   'planet4-blocks/gallery': GalleryFrontend,
 };
 
-const usePortals = window.location.hash === '#portals';
-
-if (!usePortals) {
-  document.querySelectorAll(`[data-render]`).forEach(
-    blockNode => {
-      const blockName = blockNode.dataset.render;
-      const BlockFrontend = COMPONENTS[blockName];
-      const attributes = JSON.parse(blockNode.dataset.attributes);
-      wp.element.render(<BlockFrontend { ...attributes.attributes } />, blockNode);
-    }
-  );
-} else {
-
-
-  const blocks = [...document.querySelectorAll(`[data-render]`)];
-  wp.element.render(
-    <div style={ { display: 'none' } }>
-      { blocks.map(blockNode => {
+const doRender = async () => {
+  const usePortals = window.location.hash === '#portals';
+  if (!usePortals) {
+    document.querySelectorAll(`[data-render]`).forEach(
+      blockNode => {
         const blockName = blockNode.dataset.render;
         const BlockFrontend = COMPONENTS[blockName];
         const attributes = JSON.parse(blockNode.dataset.attributes);
+        wp.element.render(<BlockFrontend { ...attributes.attributes } />, blockNode);
+      }
+    );
+  } else {
+    const blocks = [...document.querySelectorAll(`[data-render]`)];
+    wp.element.render(
+      <div style={ { display: 'none' } }>
+        { blocks.map(blockNode => {
+          const blockName = blockNode.dataset.render;
+          const BlockFrontend = COMPONENTS[blockName];
+          const attributes = JSON.parse(blockNode.dataset.attributes);
 
-        return wp.element.createPortal(
-          <BlockFrontend { ...attributes.attributes } />,
-          blockNode
-        );
-      }) }
-    </div>,
-    document.getElementById('phony-root')
-  );
+          return wp.element.createPortal(
+            <BlockFrontend { ...attributes.attributes } />,
+            blockNode
+          );
+        }) }
+      </div>,
+      document.getElementById('phony-root')
+    );
+  }
 }
+doRender();
