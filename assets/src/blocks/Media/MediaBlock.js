@@ -1,4 +1,5 @@
 import {Media} from './Media';
+import { mediaV1 } from './deprecated/MediaBlock';
 
 const {__} = wp.i18n;
 
@@ -103,7 +104,10 @@ export class MediaBlock {
         },
         save() {
           return null;
-        }
+        },
+        deprecated: [
+          mediaV1,
+        ],
       });
     };
 }
