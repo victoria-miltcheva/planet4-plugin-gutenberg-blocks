@@ -1,8 +1,8 @@
 import { useState, useEffect } from '@wordpress/element';
 import { fetchJson } from '../../functions/fetchJson';
+import { addQueryArgs } from '../../functions/addQueryArgs';
 
 const { apiFetch } = wp;
-const { addQueryArgs } = wp.url;
 
 export const useArticlesFetch = (attributes, postType, postId, baseUrl = null, postCategories = []) => {
   const { article_count, post_types, posts, tags, ignore_categories } = attributes;
