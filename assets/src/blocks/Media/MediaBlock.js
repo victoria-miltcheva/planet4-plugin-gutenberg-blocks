@@ -1,5 +1,5 @@
 import {Media} from './Media';
-import { mediaV1 } from './deprecated/MediaBlock';
+import { mediaV1 } from './deprecated/mediaV1';
 
 const {__} = wp.i18n;
 
