@@ -17,6 +17,16 @@ const attributes = {
   },
 };
 
+// Old content didn't store the poster url and embed html in the props. For the frontend this is caught in the block's
+// backend render method, where we setup a div to be frontend rendered by the same MediaFrontend component as is used for
+// save.
+export const lacksAttributes = attributes => {
+  const lacksEmbedHtml = attributes.media_url && !attributes.media_url.endsWith('.mp4') && !attributes.embed_html;
+  const lacksPosterUrl = attributes.video_poster_img && !attributes.poster_url;
+
+  return lacksEmbedHtml || lacksPosterUrl;
+};
+
 export const registerMediaBlock = () => {
   const {registerBlockType} = wp.blocks;
 
@@ -39,7 +49,11 @@ export const registerMediaBlock = () => {
       },
     },
     save: ({ attributes }) => {
-      return <MediaFrontend { ...attributes } />
+      if (lacksAttributes(attributes)) {
+        return null;
+      }
+
+      return <MediaFrontend { ...attributes } />;
     },
     edit: MediaEditor,
     deprecated: [{
@@ -50,10 +64,13 @@ export const registerMediaBlock = () => {
           default: ''
         },
       },
+      isEligible({youtube_id}) {
+        return !!youtube_id;
+      },
       migrate( { youtube_id, ...attributes } ) {
         return {
           ...attributes,
-          media_url: youtube_id
+          media_url: youtube_id,
         };
       },
       save: () => {

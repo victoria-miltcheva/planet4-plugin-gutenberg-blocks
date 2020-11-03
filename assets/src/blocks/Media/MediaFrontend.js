@@ -1,5 +1,6 @@
 import { MediaEmbedPreview } from './MediaEmbedPreview';
 import { MediaElementVideo } from './MediaElementVideo';
+import { useSelect } from '@wordpress/data';
 
 const { __ } = wp.i18n;
 
