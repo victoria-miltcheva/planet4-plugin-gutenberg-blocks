@@ -119,29 +119,8 @@ const resolveURL = url => {
     : url;
 }
 
-const patchLegacyAttributes = (attributes) => {
-  return useSelect(select=> {
-    if (!lacksAttributes(attributes)) {
-      return attributes
-    }
-    const url = resolveURL(attributes.media_url);
-    const embedPreview = select('core').getEmbedPreview(url);
-
-    const embed_html = embedPreview ? embedPreview.html : null;
-    const media = select('core').getMedia(attributes.video_poster_img);
-
-    const poster_url = media ? media.media_details.sizes.large.source_url : null;
-    return {
-      ...attributes,
-      embed_html,
-      poster_url,
-    }
-  })
-}
-
 export const MediaEditor = (props) => {
-  const attributes = patchLegacyAttributes(props.attributes);
-  const { setAttributes, isSelected } = props;
+  const { attributes, setAttributes, isSelected } = props;
 
   const toAttribute = attributeName => value => setAttributes({ [attributeName]: value });
 
