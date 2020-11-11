@@ -172,7 +172,8 @@ function set_allowed_block_types( $allowed_block_types, $post ) {
 		'core/list',
 		'core/quote', // TODO: Styling or removal.
 		// 'core/audio', // removed, not needed.
-		// 'core/cover', // removed, not needed.
+		'core/cover',
+		'core/group',
 		'core/file',
 		// 'core/video', // TODO: Decision. Ideally only allow embedded video.
 		// 'core/preformatted', // removed, not needed.

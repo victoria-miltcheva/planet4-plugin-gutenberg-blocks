@@ -3,14 +3,23 @@ const { addFilter } = wp.hooks;
 import P4ButtonEdit from './components/p4_button/edit';
 import P4TableEdit from './components/p4_table/edit';
 
+import { CoverEdit, CoverRegister, CoverSaveElement } from './components/CoverFields/CoverFields.js';
+
 export const addBlockFilters = () => {
   addFileBlockFilter();
   addButtonBlockFilter();
   addTableBlockFilter();
+  // addCoreCoverBlockFilter();
 };
 
+const addCoreCoverBlockFilter = () => {
+  addFilter('blocks.registerBlockType', 'core/cover/inner', CoverRegister);
+  addFilter('editor.BlockEdit', 'core/cover/inner', CoverEdit);
+  // addFilter('blocks.getSaveElement', 'core/cover/inner', CoverSaveElement);
+}
+
 const addFileBlockFilter = () => {
-  const setDownloadButtonToggleDefualtFalse = (settings, name) => {
+  const setDownloadButtonToggleDefaultFalse = (settings, name) => {
 
     if ('core/file' !== name) {
       return settings;
@@ -21,7 +30,7 @@ const addFileBlockFilter = () => {
     return settings;
   };
 
-  addFilter('blocks.registerBlockType', 'planet4-blocks/filters/file', setDownloadButtonToggleDefualtFalse);
+  addFilter('blocks.registerBlockType', 'planet4-blocks/filters/file', setDownloadButtonToggleDefaultFalse);
 };
 
 const addButtonBlockFilter = () => {
