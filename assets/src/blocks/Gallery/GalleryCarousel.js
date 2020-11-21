@@ -100,6 +100,7 @@ export const GalleryCarousel = ({ images }) => {
             id={`${idRef.current}-slide${index}`}
           >
             <img
+              loading='lazy'
               src={image.image_src}
               srcSet={image.image_srcset}
               sizes={image.image_sizes || 'false'}
