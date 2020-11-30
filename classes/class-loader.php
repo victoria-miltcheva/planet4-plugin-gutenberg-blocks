@@ -119,6 +119,14 @@ final class Loader {
 			new Blocks\SocialMediaCards(),
 			new Blocks\ENForm(),
 		];
+
+		// Frontend styles in editor
+		$this->setEditorStyles();
+	}
+
+	private function setEditorStyles(): void {
+		add_theme_support('editor-styles');
+		add_editor_style(P4GBKS_PLUGIN_DIR . 'assets/build/style.min.css');
 	}
 
 	/**
