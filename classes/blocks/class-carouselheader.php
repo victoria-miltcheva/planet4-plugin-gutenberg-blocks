@@ -28,17 +28,47 @@ class CarouselHeader extends Base_Block {
 	 * Gallery constructor.
 	 */
 	public function __construct() {
+		add_action( 'init', [ $this, 'init_carouselheader_block' ] );
+	}
+
+	public function init_carouselheader_block() {
+		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/CarouselheaderFrontendIndex.js';
+		wp_register_script(
+			self::BLOCK_NAME . '-frontend-js',
+			$file_url,
+			['planet4-blocks-frontend'],
+			time(),
+			true
+		);
+
+		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/CarouselheaderEditorIndex.js';
+		wp_register_script(
+			self::BLOCK_NAME . '-editor-js',
+			$file_url,
+			['planet4-blocks-script'],
+			time(),
+			false
+		);
+
+		wp_register_style(
+			self::BLOCK_NAME . '-frontend-css',
+			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/CarouselheaderFrontendStyles.min.css',
+			[],
+			time()
+		);
+
+		wp_register_style(
+			self::BLOCK_NAME . '-editor-css',
+			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/CarouselheaderEditorStyles.min.css',
+			[],
+			time()
+		);
+
 		register_block_type(
 			self::BLOCK_NAME,
 			[
-				'editor_script'   => 'planet4-blocks',
-				'render_callback' => static function ( $attributes, $content ) {
-					if ( trim($content) === '' ) {
-						$content = self::convert_to_static_block( $attributes );
-					}
-
-					return self::as_hydratable_block( self::BLOCK_NAME, $attributes, $content );
-				},
+				'apiVersion' => 2,
+				'render_callback' => [ self::class, 'render_hydratable' ],
 				'attributes'      => [
 					'carousel_autoplay' => [
 						'type'    => 'boolean',
@@ -82,10 +112,20 @@ class CarouselHeader extends Base_Block {
 						],
 					],
 				],
+				'editor_script'   => self::BLOCK_NAME . '-editor-js',
+				'editor_style'    => self::BLOCK_NAME . '-editor-css',
+				'script'          => self::BLOCK_NAME . '-frontend-js',
+				'style'           => self::BLOCK_NAME . '-frontend-css',
 			]
 		);
+	}
 
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_scripts' ] );
+	public static function render_hydratable( $attributes, $content ) {
+		if ( is_string($content) && trim($content) === '' ) {
+			$content = self::convert_to_static_block( $attributes );
+		}
+
+		return self::as_hydratable_block( self::BLOCK_NAME, $attributes, $content );
 	}
 
 	public static function convert_to_static_block( $attributes ) {
@@ -102,6 +142,35 @@ class CarouselHeader extends Base_Block {
 	 */
 	public function enqueue_editor_scripts() {
 		wp_enqueue_script( 'hammer', 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js', [], '2.0.8', true );
+
+		$filepath = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/CarouselheaderEditorIndex.js';
+		wp_register_script(
+			self::BLOCK_NAME . '-editor-js',
+			$filepath,
+			[],
+			time(),
+			true
+		);
+	}
+
+	public function enqueue_frontend_scripts() {
+		wp_enqueue_script( 'hammer', 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js', [], '2.0.8', true );
+
+		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/CarouselheaderFrontendIndex.js';
+		wp_enqueue_script(
+			self::BLOCK_NAME . '-frontend-js',
+			$file_url,
+			['planet4-blocks-frontend'],
+			time(),
+			true
+		);
+
+		wp_enqueue_style(
+			self::BLOCK_NAME . '-frontend-css',
+			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/CarouselheaderFrontendStyles.min.css',
+			[],
+			time()
+		);
 	}
 
 	/**

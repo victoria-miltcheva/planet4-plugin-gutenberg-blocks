@@ -6,12 +6,20 @@ const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 const RemovePlugin = require('remove-files-webpack-plugin');
 const dashDash = require('@greenpeace/dashdash');
 
+const entryPoints = blockName => {
+  return {
+    [`${blockName}EditorIndex`]: `./assets/src/blocks/${blockName}/${blockName}EditorIndex.js`,
+    [`${blockName}EditorStyles`]: `./assets/src/styles/blocks/${blockName}/${blockName}EditorIndex.scss`,
+    [`${blockName}FrontendIndex`]: `./assets/src/blocks/${blockName}/${blockName}FrontendIndex.js`,
+    [`${blockName}FrontendStyles`]: `./assets/src/styles/blocks/${blockName}/${blockName}FrontendIndex.scss`,
+  }
+}
+
 module.exports = {
   ...defaultConfig,
   entry: {
     editorIndex: './assets/src/editorIndex.js',
     frontendIndex: './assets/src/frontendIndex.js',
-    carouselHeaderFrontIndex: './assets/src/carouselHeaderFrontIndex.js',
     style: './assets/src/styles/style.scss',
     editorStyle: './assets/src/styles/editorStyle.scss',
     theme_antarctic: './assets/src/styles/theme_antarctic.scss',
@@ -21,6 +29,7 @@ module.exports = {
     theme_oceans: './assets/src/styles/theme_oceans.scss',
     theme_oil: './assets/src/styles/theme_oil.scss',
     theme_plastic: './assets/src/styles/theme_plastic.scss',
+    ...entryPoints('Carouselheader'),
   },
   output: {
     filename: '[name].js',
