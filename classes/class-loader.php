@@ -329,7 +329,7 @@ final class Loader {
 
 		// Enqueue editor script for all Blocks in this Plugin.
 		self::enqueue_local_script(
-			'planet4-blocks-script',
+			'planet4-blocks-editor-script',
 			'assets/build/editorIndex.js',
 			[
 				'wp-blocks',      // Helpers for registering blocks.
@@ -355,23 +355,23 @@ final class Loader {
 				'feature_engaging_networks' => $en_active,
 			],
 		];
-		wp_localize_script( 'planet4-blocks-script', 'p4ge_vars', $reflection_vars );
+		wp_localize_script( 'planet4-blocks-editor-script', 'p4ge_vars', $reflection_vars );
 
 		$reflection_vars = [
 			'home'  => P4GBKS_PLUGIN_URL . '/public/',
 			'pages' => $this->get_en_pages(),
 			'forms' => $this->get_en_forms(),
 		];
-		wp_localize_script( 'planet4-blocks-script', 'p4en_vars', $reflection_vars );
+		wp_localize_script( 'planet4-blocks-editor-script', 'p4en_vars', $reflection_vars );
 
 		// Variables reflected from PHP to JS.
 		$reflection_vars = [
 			'dateFormat' => get_option( 'date_format' ),
 		];
-		wp_localize_script( 'planet4-blocks-script', 'p4bk_vars', $reflection_vars );
+		wp_localize_script( 'planet4-blocks-editor-script', 'p4bk_vars', $reflection_vars );
 
 		// Sets translated strings for a JS script.
-		wp_set_script_translations( 'planet4-blocks-script', 'planet4-blocks-backend', P4GBKS_PLUGIN_DIR . '/languages' );
+		wp_set_script_translations( 'planet4-blocks-editor-script', 'planet4-blocks-backend', P4GBKS_PLUGIN_DIR . '/languages' );
 	}
 
 	/**
@@ -391,7 +391,7 @@ final class Loader {
 
 		// Include React in the Frontend.
 		self::enqueue_local_script(
-			'planet4-blocks-frontend',
+			'planet4-blocks-script',
 			'assets/build/frontendIndex.js',
 			[
 				// WP React wrapper.

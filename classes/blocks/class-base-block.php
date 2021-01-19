@@ -95,13 +95,66 @@ abstract class Base_Block {
 		throw new NotImplemented( 'Method update_data is not implemented for ' . static::class );
 	}
 
-	public static function as_hydratable_block( $block_name, $attributes, $content ) {
+	public function as_hydratable_block( $attributes, $content ) {
 		$json = wp_json_encode(
 			[ 'attributes' => $attributes ]
 		);
 
-		return "<div data-hydrate='" . $block_name . "' data-attributes='$json'>"
+		return "<div data-hydrate='" . static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . "' data-attributes='$json'>"
 			. trim($content)
 			. '</div>';
 	}
+
+	/**
+	 * Register the scripts for a block
+	 */
+	public static function register_scripts() {
+		$camelized_block_name = str_replace("-", "", ucwords(static::BLOCK_NAME, "-"));
+
+		// Frontend Script (aka: script)
+		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/' . $camelized_block_name . 'Script.js';
+		wp_register_script(
+			static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-script',
+			$file_url,
+			['planet4-blocks-script'],
+			time(),
+			true
+		);
+
+		// Editor Script
+		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/' . $camelized_block_name . 'EditorScript.js';
+		wp_register_script(
+			static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-editor-script',
+			$file_url,
+			['planet4-blocks-editor-script'],
+			time(),
+			false
+		);
+
+		// Frontend Style (aka: style)
+		wp_register_style(
+			static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-style',
+			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/' . $camelized_block_name . 'Style.min.css',
+			[],
+			time()
+		);
+
+		// Editor Style
+		wp_register_style(
+			static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-editor-style',
+			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/' . $camelized_block_name . 'EditorStyle.min.css',
+			[],
+			time()
+		);
+
+		$registered_scripts = [
+			'editor_script' => static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-editor-script',
+			'editor_style'  => static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-editor-style',
+			'script'        => static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-script',
+			'style'         => static::BLOCK_CATEGORY . '/' . static::BLOCK_NAME . '-style',
+		];
+
+		return $registered_scripts;
+	}
+
 }

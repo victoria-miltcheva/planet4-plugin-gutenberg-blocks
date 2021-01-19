@@ -8,10 +8,10 @@ const dashDash = require('@greenpeace/dashdash');
 
 const entryPoints = blockName => {
   return {
-    [`${blockName}EditorIndex`]: `./assets/src/blocks/${blockName}/${blockName}EditorIndex.js`,
-    [`${blockName}EditorStyles`]: `./assets/src/styles/blocks/${blockName}/${blockName}EditorIndex.scss`,
-    [`${blockName}FrontendIndex`]: `./assets/src/blocks/${blockName}/${blockName}FrontendIndex.js`,
-    [`${blockName}FrontendStyles`]: `./assets/src/styles/blocks/${blockName}/${blockName}FrontendIndex.scss`,
+    [`${blockName}EditorScript`]: `./assets/src/blocks/${blockName}/${blockName}EditorScript.js`,
+    [`${blockName}EditorStyle`]: `./assets/src/styles/blocks/${blockName}/${blockName}EditorStyle.scss`,
+    [`${blockName}Script`]: `./assets/src/blocks/${blockName}/${blockName}Script.js`,
+    [`${blockName}Style`]: `./assets/src/styles/blocks/${blockName}/${blockName}Style.scss`,
   }
 }
 
@@ -29,7 +29,7 @@ module.exports = {
     theme_oceans: './assets/src/styles/theme_oceans.scss',
     theme_oil: './assets/src/styles/theme_oil.scss',
     theme_plastic: './assets/src/styles/theme_plastic.scss',
-    ...entryPoints('Carouselheader'),
+    ...entryPoints('CarouselHeader'),
   },
   output: {
     filename: '[name].js',

@@ -22,7 +22,14 @@ class CarouselHeader extends Base_Block {
 	 *
 	 * @const string BLOCK_NAME.
 	 */
-	const BLOCK_NAME = 'planet4-blocks/carousel-header';
+	const BLOCK_NAME = 'carousel-header';
+
+	/**
+	 * Block category.
+	 *
+	 * @const string BLOCK_CATEGORY.
+	 */
+	const BLOCK_CATEGORY = 'planet4-blocks';
 
 	/**
 	 * Gallery constructor.
@@ -32,43 +39,13 @@ class CarouselHeader extends Base_Block {
 	}
 
 	public function init_carouselheader_block() {
-		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/CarouselheaderFrontendIndex.js';
-		wp_register_script(
-			self::BLOCK_NAME . '-frontend-js',
-			$file_url,
-			['planet4-blocks-frontend'],
-			time(),
-			true
-		);
-
-		$file_url = trailingslashit( P4GBKS_PLUGIN_URL ) . 'assets/build/CarouselheaderEditorIndex.js';
-		wp_register_script(
-			self::BLOCK_NAME . '-editor-js',
-			$file_url,
-			['planet4-blocks-script'],
-			time(),
-			false
-		);
-
-		wp_register_style(
-			self::BLOCK_NAME . '-frontend-css',
-			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/CarouselheaderFrontendStyles.min.css',
-			[],
-			time()
-		);
-
-		wp_register_style(
-			self::BLOCK_NAME . '-editor-css',
-			trailingslashit(P4GBKS_PLUGIN_URL) . 'assets/build/CarouselheaderEditorStyles.min.css',
-			[],
-			time()
-		);
+		self::register_scripts();
 
 		register_block_type(
-			self::BLOCK_NAME,
+			self::BLOCK_CATEGORY . '/' . self::BLOCK_NAME,
 			[
 				'apiVersion' => 2,
-				'render_callback' => [ self::class, 'render_hydratable' ],
+				'render_callback' => [ $this, 'render_hydratable' ],
 				'attributes'      => [
 					'carousel_autoplay' => [
 						'type'    => 'boolean',
@@ -82,6 +59,18 @@ class CarouselHeader extends Base_Block {
 							// In JSON Schema you can specify object properties in the properties attribute.
 							'properties' => [
 								'image'            => [
+									'type' => 'integer',
+								],
+								'image_src'        => [
+									'type' => 'integer',
+								],
+								'image_srcset'     => [
+									'type' => 'integer',
+								],
+								'image_sizes'      => [
+									'type' => 'integer',
+								],
+								'image_alt'        => [
 									'type' => 'integer',
 								],
 								'header'           => [
@@ -112,20 +101,24 @@ class CarouselHeader extends Base_Block {
 						],
 					],
 				],
-				'editor_script'   => self::BLOCK_NAME . '-editor-js',
-				'editor_style'    => self::BLOCK_NAME . '-editor-css',
-				'script'          => self::BLOCK_NAME . '-frontend-js',
-				'style'           => self::BLOCK_NAME . '-frontend-css',
+				'editor_script'   => self::BLOCK_CATEGORY . '/' . self::BLOCK_NAME . '-editor-script',
+				'editor_style'    => self::BLOCK_CATEGORY . '/' . self::BLOCK_NAME . '-editor-style',
+				'script'          => self::BLOCK_CATEGORY . '/' . self::BLOCK_NAME . '-script',
+				'style'           => self::BLOCK_CATEGORY . '/' . self::BLOCK_NAME . '-style',
 			]
 		);
 	}
 
-	public static function render_hydratable( $attributes, $content ) {
+	public function render_hydratable( $attributes, $content ) {
 		if ( is_string($content) && trim($content) === '' ) {
 			$content = self::convert_to_static_block( $attributes );
 		}
 
-		return self::as_hydratable_block( self::BLOCK_NAME, $attributes, $content );
+		if ( ! empty( $attributes['slides'] ) && empty( $attributes['slides'][0]['image_src'] )  ) {
+			$attributes['slides'] = $this->prepare_data( $attributes['slides'] );
+		}
+
+		return self::as_hydratable_block( $attributes, $content );
 	}
 
 	public static function convert_to_static_block( $attributes ) {
@@ -138,56 +131,28 @@ class CarouselHeader extends Base_Block {
 	}
 
 	/**
-	 * Get all the data that will be needed to render the block correctly.
+	 * Get image data for block that have.
 	 *
 	 * @param array $fields This is the array of fields of this block.
 	 *
 	 * @return array The data to be passed in the View.
 	 */
-	public function prepare_data( $fields ): array {
-		$total_images = 0;
-		if ( ! empty( $fields['slides'] ) ) {
-			foreach ( $fields['slides'] as &$slide ) {
+	public function prepare_data( $slides ): array {
+		if ( ! empty( $slides ) ) {
+			foreach ( $slides as &$slide ) {
 				$image_id   = $slide['image'];
 				$temp_array = wp_get_attachment_image_src( $image_id, 'retina-large' );
 				if ( false !== $temp_array && ! empty( $temp_array ) ) {
-					$slide['image']        = $temp_array[0];
+					$slide['image_src']    = $temp_array[0];
 					$slide['image_srcset'] = wp_get_attachment_image_srcset( $image_id, 'retina-large', wp_get_attachment_metadata( $image_id ) );
 					$slide['image_sizes']  = wp_calculate_image_sizes( 'retina-large', null, null, $image_id );
-					$total_images ++;
 				}
 
-				if ( isset( $slide['focal_points'] ) ) {
-					$x = isset( $slide['focal_points']['x'] ) && is_numeric( $slide['focal_points']['x'] ) ? round( $slide['focal_points']['x'] * 100, 0 ) . '% ' : '50%';
-					$y = isset( $slide['focal_points']['y'] ) && is_numeric( $slide['focal_points']['y'] ) ? round( $slide['focal_points']['y'] * 100, 0 ) . '% ' : '50%';
-
-					$focus_image          = "$x $y";
-					$slide['focus_image'] = $focus_image;
-				}
 				$temp_image         = wp_prepare_attachment_for_js( $image_id );
 				$slide['image_alt'] = $temp_image['alt'] ?? '';
-
 			}
 		}
-		$fields['total_images'] = $total_images;
 
-		// Enqueue js for the frontend.
-		if ( ! $this->is_rest_request() ) {
-			wp_enqueue_script( 'hammer', 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js', [], '2.0.8', true );
-			\P4GBKS\Loader::enqueue_local_script(
-				'carousel-header',
-				'assets/build/carouselHeaderFrontIndex.js',
-				[
-					'jquery',
-					'hammer',
-				]
-			);
-		}
-
-		$block_data = [
-			'fields' => $fields,
-		];
-
-		return $block_data;
+		return $slides;
 	}
 }
