@@ -110,12 +110,12 @@ class CarouselHeader extends Base_Block {
 	}
 
 	public function render_hydratable( $attributes, $content ) {
-		if ( is_string($content) && trim($content) === '' ) {
-			$content = self::convert_to_static_block( $attributes );
+		if ( ! empty( $attributes['slides'] ) && empty( $attributes['slides'][0]['image_url'] )  ) {
+			$attributes['slides'] = $this->prepare_data( $attributes['slides'] );
 		}
 
-		if ( ! empty( $attributes['slides'] ) && empty( $attributes['slides'][0]['image_src'] )  ) {
-			$attributes['slides'] = $this->prepare_data( $attributes['slides'] );
+		if ( is_string($content) && trim($content) === '' ) {
+			$content = self::convert_to_static_block( $attributes );
 		}
 
 		return self::as_hydratable_block( $attributes, $content );
@@ -125,6 +125,7 @@ class CarouselHeader extends Base_Block {
 		$node_script = 'assets/build/CarouselHeaderMigrate-server.js';
 		$blocks_dir = P4GBKS_PLUGIN_DIR;
 		$attributes_json = json_encode( $attributes );
+
 		exec("cd ${blocks_dir} && node ${node_script} '${attributes_json}' 2>&1", $out, $err);
 
 		return $out[0];
@@ -143,7 +144,7 @@ class CarouselHeader extends Base_Block {
 				$image_id   = $slide['image'];
 				$temp_array = wp_get_attachment_image_src( $image_id, 'retina-large' );
 				if ( false !== $temp_array && ! empty( $temp_array ) ) {
-					$slide['image_src']    = $temp_array[0];
+					$slide['image_url']    = $temp_array[0];
 					$slide['image_srcset'] = wp_get_attachment_image_srcset( $image_id, 'retina-large', wp_get_attachment_metadata( $image_id ) );
 					$slide['image_sizes']  = wp_calculate_image_sizes( 'retina-large', null, null, $image_id );
 				}
