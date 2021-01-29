@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 
 import { URLInput } from "../../components/URLInput/URLInput";
+import { StyleSelector } from "../../components/StyleSelector/StyleSelector";
 
 import { CounterFrontend } from './CounterFrontend';
 
@@ -28,11 +29,16 @@ export class CounterEditor extends Component {
   }
 
   renderEdit() {
-    const { attributes } = this.props;
+    const { attributes, styles } = this.props;
 
     return (
       <Fragment>
         <InspectorControls>
+          <StyleSelector
+            styles={styles}
+            selectStyle={this.toAttribute('style')}
+            active={attributes.style}
+          />
           <PanelBody title={__('Setting', 'planet4-blocks-backend')}>
             <div>
               <TextControl

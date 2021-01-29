@@ -5,7 +5,7 @@ const BLOCK_NAME = 'planet4-blocks/counter';
 
 export class CounterBlock {
   constructor() {
-    const { registerBlockType, unregisterBlockStyle, registerBlockStyle } = wp.blocks;
+    const { registerBlockType } = wp.blocks;
     const { __ } = wp.i18n;
     const attributes = {
       title: {
@@ -38,6 +38,33 @@ export class CounterBlock {
       }
     };
 
+    const styles = [
+      {
+        name: 'plain',
+        label: __('Text Only', 'planet4-blocks'),
+        image: window.p4ge_vars.home + 'images/counter_th_text.png',
+        isDefault: true
+      },
+      {
+        name: 'bar',
+        label: __('Progress Bar', 'planet4-blocks'),
+        image: window.p4ge_vars.home + 'images/counter_th_bar.png',
+      },
+      {
+        name: 'arc',
+        label: __('Progress Dial', 'planet4-blocks'),
+        image: window.p4ge_vars.home + 'images/counter_th_arc.png',
+      },
+    ];
+
+    if (window.p4ge_vars.features.feature_engaging_networks) {
+      styles.push({
+        name: 'en-forms-bar',
+        label: __('Progress Bar inside EN Form', 'planet4-blocks'),
+        image: window.p4ge_vars.home + 'images/counter_th_bar.png',
+      });
+    }
+
     registerBlockType( BLOCK_NAME, {
       title: __( 'Counter', 'planet4-blocks-backend' ),
       icon: 'dashboard',
@@ -58,39 +85,39 @@ export class CounterBlock {
         return <CounterEditor
           attributes={attributes}
           setAttributes={setAttributes}
-          isSelected={ isSelected }
+          isSelected={isSelected}
+          styles={styles}
         />
       },
       save: frontendRendered( BLOCK_NAME )
     });
 
     // Remove the default style since it's the same as "text only"
-    unregisterBlockStyle(BLOCK_NAME, 'default');
+    // unregisterBlockStyle(BLOCK_NAME, 'default');
 
-    const styles = [
-        {
-          name: 'plain',
-          label: __( 'Text Only', 'planet4-blocks' ),
-          isDefault: true
-        },
-        {
-          name: 'bar',
-          label: __( 'Progress Bar', 'planet4-blocks' )
-        },
-        {
-          name: 'arc',
-          label: __( 'Progress Dial', 'planet4-blocks' )
-        },
+    // const styles = [
+    //     {
+    //       name: 'plain',
+    //       label: __( 'Text Only', 'planet4-blocks' ),
+    //       isDefault: true
+    //     },
+    //     {
+    //       name: 'bar',
+    //       label: __( 'Progress Bar', 'planet4-blocks' )
+    //     },
+    //     {
+    //       name: 'arc',
+    //       label: __( 'Progress Dial', 'planet4-blocks' )
+    //     },
+    //   ]
 
-      ]
-
-    if (window.p4ge_vars.features.feature_engaging_networks) {
-      styles.push({
-        name: 'en-forms-bar',
-        label: __('Progress Bar inside EN Form', 'planet4-blocks')
-      });
-    }
+    // if (window.p4ge_vars.features.feature_engaging_networks) {
+    //   styles.push({
+    //     name: 'en-forms-bar',
+    //     label: __('Progress Bar inside EN Form', 'planet4-blocks')
+    //   });
+    // }
     // Add our custom styles
-    registerBlockStyle( BLOCK_NAME, styles);
+    // registerBlockStyle( BLOCK_NAME, styles);
   };
 }

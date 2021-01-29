@@ -26,7 +26,7 @@ export class CounterFrontend extends Component {
     var enFormHeader = document.querySelector('.enform-extra-header-placeholder');
     if ( counterBar !== null && enFormHeader !== null ) {
       enFormHeader.append(counterBar);
-    } 
+    }
   }
 
   componentWillUnmount() {
@@ -84,26 +84,24 @@ export class CounterFrontend extends Component {
 
   render() {
     const {
-      className,
       title,
       description,
       text,
       target,
-      isEditing
+      isEditing,
+      style
     } = this.props;
 
     const { completed } = this.state;
 
-    let style = this.props.style || 'plain'; // Needed to convert existing blocks
-    if (className) {
-      style = className.split('is-style-')[1];
-    }
     const arcLength = 31.5;
 
     const percent = Math.min(target > 0 ? Math.round(completed / target * 100) : 0, 100);
 
-    let counterClassName = `block container counter-block counter-style-${style}`;
-    if (isEditing) counterClassName += ` editing`;
+    let counterClassName = `block container counter-block counter-style-${style || 'plain'}`;
+    if (isEditing) {
+      counterClassName += ` editing`;
+    }
 
     return (
       <Fragment>
