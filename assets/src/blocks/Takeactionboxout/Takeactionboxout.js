@@ -6,12 +6,12 @@ import {
 	FormTokenField,
   TextControl as BaseTextControl,
   TextareaControl as BaseTextareaControl,
-	ServerSideRender,
 	SelectControl,
 	CheckboxControl,
 	Toolbar,
 	IconButton, Button
 } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import withCharacterCounter from '../../components/withCharacterCounter/withCharacterCounter';
 
 const TextControl = withCharacterCounter( BaseTextControl );

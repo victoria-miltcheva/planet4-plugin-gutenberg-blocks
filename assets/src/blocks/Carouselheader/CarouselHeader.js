@@ -2,8 +2,8 @@ import {Component, Fragment} from '@wordpress/element';
 import {
   Button,
   CheckboxControl,
-  ServerSideRender
 } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import {LayoutSelector} from '../../components/LayoutSelector/LayoutSelector';
 import {Preview} from '../../components/Preview';
 import {CarouselHeaderSlide} from "./CarouselHeaderSlide";

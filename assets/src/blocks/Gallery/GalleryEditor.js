@@ -8,7 +8,7 @@ import { GalleryGrid } from './GalleryGrid';
 import { useGalleryImages } from './useGalleryImages';
 import { InspectorControls } from '@wordpress/block-editor';
 
-import { MediaPlaceholder, MediaUploadCheck } from "@wordpress/blockEditor";
+import { MediaPlaceholder, MediaUploadCheck } from "@wordpress/block-editor";
 
 const { RichText } = wp.blockEditor;
 const { __ } = wp.i18n;

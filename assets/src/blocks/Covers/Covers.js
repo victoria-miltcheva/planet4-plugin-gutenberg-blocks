@@ -3,8 +3,8 @@ import { Component } from '@wordpress/element';
 import {
   SelectControl,
   TextControl as BaseTextControl,
-  TextareaControl as BaseTextareaControl,
-  ServerSideRender } from '@wordpress/components';
+  TextareaControl as BaseTextareaControl } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 
 import { LayoutSelector } from '../../components/LayoutSelector/LayoutSelector';
 import { Preview } from '../../components/Preview';

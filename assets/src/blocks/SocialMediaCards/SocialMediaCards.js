@@ -8,10 +8,11 @@ import {
 import {
   TextControl,
   TextareaControl,
-  ServerSideRender,
   Button,
   Tooltip
 } from '@wordpress/components';
+
+import ServerSideRender from '@wordpress/server-side-render';
 
 export class SocialMediaCards extends Component {
   constructor( props ) {

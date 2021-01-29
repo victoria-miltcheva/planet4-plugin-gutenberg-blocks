@@ -9,8 +9,8 @@ import {
   TextareaControl,
   ToggleControl,
   SelectControl,
-  ServerSideRender
 } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import {MediaPlaceholder} from "@wordpress/editor";
 import {ValidationMessage} from "../../components/enform/ValidationMessage/ValidationMessage";
 

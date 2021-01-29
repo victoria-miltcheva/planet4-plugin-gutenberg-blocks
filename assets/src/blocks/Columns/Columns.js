@@ -2,11 +2,11 @@ import {Component,Fragment} from "@wordpress/element";
 import {
   TextareaControl as BaseTextareaControl,
   TextControl as BaseTextControl,
-  ServerSideRender,
   Dashicon,
   Tooltip,
   ToggleControl, Button
 } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import {MediaPlaceholder, MediaUpload, MediaUploadCheck} from "@wordpress/editor";
 
 import {LayoutSelector} from '../../components/LayoutSelector/LayoutSelector';

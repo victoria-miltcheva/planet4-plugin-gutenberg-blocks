@@ -1,7 +1,5 @@
 import {Component, Fragment} from '@wordpress/element';
-import {
-  ServerSideRender
-} from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import {Preview} from '../../components/Preview';
 
 export class SubPages extends Component {

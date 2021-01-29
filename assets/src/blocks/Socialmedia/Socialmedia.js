@@ -5,8 +5,9 @@ import {
   TextControl as BaseTextControl,
   TextareaControl as BaseTextareaControl,
   SelectControl,
-  ServerSideRender
 } from '@wordpress/components';
+
+import ServerSideRender from '@wordpress/server-side-render';
 import withCharacterCounter from '../../components/withCharacterCounter/withCharacterCounter';
 import {URLInput} from "../../components/URLInput/URLInput";
 

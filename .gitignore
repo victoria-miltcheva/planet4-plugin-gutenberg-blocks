@@ -12,3 +12,5 @@ node_modules/
 
 # Built css and js assets
 assets/build/*
+
+assets/snowpack-build/*
