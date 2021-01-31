@@ -1,16 +1,16 @@
 import { render } from '@render';
 
-import { SpreadsheetFrontend } from '../blocks/Spreadsheet/SpreadsheetFrontend';
-import { CounterFrontend } from '../blocks/Counter/CounterFrontend';
-import { ArticlesFrontend } from '../blocks/Articles/ArticlesFrontend';
-import { CookiesFrontend } from '../blocks/Cookies/CookiesFrontend';
-import { SplittwocolumnsFrontend } from "../blocks/Splittwocolumns/SplittwocolumnsFrontend";
-import { HappypointFrontend } from '../blocks/Happypoint/HappypointFrontend';
-import { GalleryFrontend } from '../blocks/Gallery/GalleryFrontend';
-import { TimelineFrontend } from '../blocks/Timeline/TimelineFrontend';
-import { SubmenuFrontend } from '../blocks/Submenu/SubmenuFrontend';
-import { MediaFrontend } from '../blocks/Media/MediaFrontend';
-import { setupMediaElementJS } from '../blocks/Media/setupMediaElementJS';
+import { SpreadsheetFrontend } from './blocks/Spreadsheet/SpreadsheetFrontend';
+import { CounterFrontend } from './blocks/Counter/CounterFrontend';
+import { ArticlesFrontend } from './blocks/Articles/ArticlesFrontend';
+import { CookiesFrontend } from './blocks/Cookies/CookiesFrontend';
+import { SplittwocolumnsFrontend } from "./blocks/Splittwocolumns/SplittwocolumnsFrontend";
+import { HappypointFrontend } from './blocks/Happypoint/HappypointFrontend';
+import { GalleryFrontend } from './blocks/Gallery/GalleryFrontend';
+import { TimelineFrontend } from './blocks/Timeline/TimelineFrontend';
+import { SubmenuFrontend } from './blocks/Submenu/SubmenuFrontend';
+import { MediaFrontend } from './blocks/Media/MediaFrontend';
+import { setupMediaElementJS } from './blocks/Media/setupMediaElementJS';
 
 // Render React components
 const COMPONENTS = {

@@ -12,10 +12,13 @@ const exclude = readdirSync('.', { withFileTypes: true })
 
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
-  exclude,
+  exclude: [
+    '**/node_modules/**/*',
+    '**/vendor/**/*',
+  ],
   mount: {
-    ['assets']: { url: '/', static: true },
-    ['assets/src/frontend']: { url: '/dist' },
+    ['assets/snowpack']: { url: '/', static: true },
+    ['scripts']: { url: '/dist' },
     /* ... */
   },
   plugins: [
