@@ -125,15 +125,15 @@ class CarouselHeader extends Base_Block {
 
 		// Enqueue js for the frontend.
 		if ( ! $this->is_rest_request() ) {
-			wp_enqueue_script( 'hammer', 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js', [], '2.0.8', true );
-			\P4GBKS\Loader::enqueue_local_script(
-				'carousel-header',
-				'assets/build/carouselHeaderFrontIndex.js',
-				[
-					'jquery',
-					'hammer',
-				]
-			);
+			// wp_enqueue_script( 'hammer', 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js', [], '2.0.8', true );
+			// \P4GBKS\Loader::enqueue_local_script(
+			// 	'carousel-header',
+			// 	// 'assets/build/carouselHeaderFrontIndex.js',
+			// 	[
+			// 		'jquery',
+			// 		'hammer',
+			// 	]
+			// );
 		}
 
 		$block_data = [

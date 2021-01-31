@@ -390,20 +390,24 @@ final class Loader {
 		);
 
 		// Include React in the Frontend.
-		self::enqueue_local_script(
-			'planet4-blocks-frontend',
-			'assets/build/frontendIndex.js',
-			[
-				// WP React wrapper.
-				// 'wp-element',
-				// Exports the __() function.
-				'wp-i18n',
-				'main',
-			],
-			true
-		);
+		// self::enqueue_local_script(
+		// 	'planet4-blocks-frontend',
+		// 	'assets/snowpack-build/dist/frontendIndex.js',
+		// 	[
+		// 		// WP React wrapper.
+		// 		'wp-element',
+		// 		// Exports the __() function.
+		// 		'wp-i18n',
+		// 		'main',
+		// 	],
+		// 	true
+		// );
 
-		self::enqueue_local_script( 'post_action', 'public/js/post_action.js', [ 'jquery' ] );
+		self::enqueue_local_script( 'post_action', 'public/js/post_action.js', [
+			'jquery' ,
+			'wp-i18n',
+			'main',
+		] );
 		self::enqueue_local_script( 'accordions', 'public/js/accordions.js' );
 
 		// Variables reflected from PHP to JS.

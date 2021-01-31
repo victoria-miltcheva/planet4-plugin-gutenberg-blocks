@@ -1,14 +1,5 @@
 // Snowpack Configuration File
 // See all supported options: https://www.snowpack.dev/reference/configuration
-const { readdirSync } = require('fs')
-
-const exclude = readdirSync('.', { withFileTypes: true })
-    .filter(dirent => dirent.name != 'assets' && !dirent.isDirectory())
-    .map(dirent => {
-      return dirent.isDirectory()
-        ? `./${dirent.name}/**`
-        : `./${dirent.name}`
-    });
 
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
@@ -28,7 +19,7 @@ module.exports = {
   ],
   packageOptions: {
     external: ["wp"],
-    polyfillNode: true,
+    // polyfillNode: true,
     // knownEntrypoints: ['./assets/src/frontend/index.js']
   },
   devOptions: {
@@ -38,9 +29,11 @@ module.exports = {
     out: "assets/snowpack-build",
     clean: true,
     minify: false,
+    jsxFactory: 'h',
+    jsxFragment: 'Fragment'
   },
   alias: {
-    '@hooks': '@wordpress/element',
-    '@render': '@wordpress/element',
+    '@hooks': 'preact/hooks',
+    '@render': 'preact',
   },
 };
