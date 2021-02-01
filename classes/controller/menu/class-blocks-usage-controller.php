@@ -10,6 +10,7 @@ namespace P4GBKS\Controllers\Menu;
 
 use P4\MasterTheme\Exception\SqlInIsEmpty;
 use P4\MasterTheme\SqlParameters;
+use P4GBKS\Controllers\Block_Usage_Table;
 use WP_Block_Type_Registry;
 
 if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
@@ -108,204 +109,32 @@ if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
 		 */
 		public function plugin_blocks_report( $type = 'text' ) {
 			global $wpdb;
-			$wpdb_prefix = $wpdb->prefix;
 
-			$block_types = $this->get_block_types();
-			$report      = [];
+			$tb = new Block_Usage_Table([
+				'wpdb' => $wpdb,
+				'group_by' => $_REQUEST['group'] ?? null,
+				'search' => $_REQUEST['s'] ?? null,
+				'filters' => [
+					'block_ns' => $_REQUEST['ns'] ?? null,
+					'block_type' => $_REQUEST['type'] ?? null,
+				],
+			]);
+			$tb->prepare_items();
 
-			if ( '' === $type ) {
-				$type = 'text';
-			}
-
-			$types_with_blocks = self::get_post_types_with_blocks();
-
-			// phpcs:disable
-			foreach ( $block_types as $block_type ) {
-				$block_comment = '%<!-- wp:' . $wpdb->esc_like( $block_type ) . ' %';
-
-				$params = new SqlParameters();
-
-				$sql = "SELECT ID, post_title
-					FROM " . $params->identifier( $wpdb->posts ) . "
-					WHERE post_status = 'publish'
-					AND post_type IN " . $params->string_list( $types_with_blocks ) . "
-					AND `post_content` LIKE " . $params->string( $block_comment ) . "
-					ORDER BY post_title";
-
-				$results = $wpdb->get_results(
-					$wpdb->prepare( $sql, $params->get_values() )
-				);
-
-				if ( !$results ) { continue; }
-
-				// Confusion between old and new covers.
-				if ( 'planet4-blocks/covers' === $block_type ) {
-					$block_type = 'Take Action Covers - Old block';
-				}
-
-				if ( 'text' === $type ) {
-					echo '<hr>';
-					echo '<h2>' . ucfirst( str_replace( '_', ' ', $block_type ) ) . '</h2>';
-					echo '<table>';
-					echo '<tr style="text-align: left">
-							<th>' . __( 'ID', 'planet4-blocks-backend' ) . '</th>
-							<th>' . __( 'Title', 'planet4-blocks-backend' ) . '</th>
-					</tr>';
-					foreach ( $results as $result ) {
-						$title = empty($result->post_title) ? self::NO_TITLE : $result->post_title;
-						echo  '<tr><td><a href="post.php?post=' . $result->ID . '&action=edit" >' . $result->ID . '</a></td>';
-						echo  '<td><a href="' . get_permalink( $result->ID ) . '" target="_blank">' . $title . '</a></td></tr>';
-					}
-					echo '</table>';
-				} else {
-					$report[ ucfirst( str_replace( '_', ' ', $block_type ) ) ] = count($results);
-				}
-			}
-
-			// Add to the report a breakdown of which tags are using a redirect page and which do not
-			// The first query shows the ones that do not use a redirect page
-			$sql = '( SELECT term.name, tt.term_id
-							FROM %1$sterm_taxonomy AS tt,
-								 %2$sterms AS term,
-								 %3$stermmeta AS tm
-							WHERE tt.`taxonomy`= \'post_tag\'
-							AND term.term_id = tt.term_id
-							AND tm.term_id=tt.term_id
-							AND tm.meta_key=\'redirect_page\'
-							AND tm.meta_value =\'\' )
-						UNION
-						( SELECT term.name, tt.term_id
-							FROM %4$sterm_taxonomy AS tt,
-								 %5$sterms AS term,
-								 %6$stermmeta AS tm
-							WHERE tt.`taxonomy`=\'post_tag\'
-							AND term.term_id = tt.term_id
-							AND tm.term_id=tt.term_id
-							AND tm.term_id NOT IN (SELECT tt.term_id
-													FROM %7$sterm_taxonomy AS tt,
-														 %8$sterms AS term,
-														 %9$stermmeta AS tm
-													WHERE tt.`taxonomy`=\'post_tag\'
-													AND term.term_id = tt.term_id
-													AND tm.term_id=tt.term_id
-													AND tm.meta_key=\'redirect_page\')
-							GROUP BY term.name, tt.term_id )';
-			$prepared_sql = $wpdb->prepare(
-				$sql,
-				[
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix
-				]
+			echo sprintf('<div class="wrap">
+				<h1 class="wp-heading-inline">Block usage</h1>
+				<hr class="wp-header-end">',
+				$tb->block_count(),
+				$tb->post_count()
 			);
-			$results = $wpdb->get_results( $prepared_sql );
-			if ( 'text' === $type ) {
-				echo '<hr>';
-				echo '<h2>Tags without redirection page</h2>';
-				echo '<table><tr style="text-align: left">
-					<th>' . __( 'ID', 'planet4-blocks-backend' ) . '</th>
-					<th>' . __( 'Title', 'planet4-blocks-backend' ) . '</th>
-				</tr>';
-				foreach ( $results as $result ) {
-					$title = empty($result->name) ? self::NO_TITLE : $result->name;
-					echo  '<tr><td><a href="term.php?taxonomy=post_tag&tag_ID=' . $result->term_id . '" >' . $result->term_id . '</a></td>';
-					echo  '<td><a href="' . get_term_link( (int) $result->term_id ) . '" target="_blank">' . $title . '</a></td></tr>';
-				}
-				echo '</table>';
-			} else {
-				$report[ 'TagsNotUsingRedirectionPage' ] = count($results);
-			}
 
-			// Add to the report a breakdown of which tags are using a redirect page and which do not
-			// The second query shows the ones that do use a redirect page
-			$sql     = 'SELECT term.name, tm.meta_value, tt.term_id
-						FROM %1$sterm_taxonomy AS tt,
-							 %2$sterms AS term,
-							 %3$stermmeta AS tm
-						WHERE tt.`taxonomy`=\'post_tag\'
-						AND term.term_id = tt.term_id
-						AND tm.term_id=tt.term_id
-						AND tm.meta_key=\'redirect_page\'
-						AND tm.meta_value !=\'\'';
-			$prepared_sql = $wpdb->prepare(
-				$sql,
-				[
-					$wpdb_prefix,
-					$wpdb_prefix,
-					$wpdb_prefix,
-				]
-			);
-			$results = $wpdb->get_results( $prepared_sql );
-			if ( 'text' === $type ) {
-				echo '<hr>';
-				echo '<h2>Tags that use a redirection page</h2>';
-				echo '<table><tr style="text-align: left">
-					<th>' . __( 'ID', 'planet4-blocks-backend' ) . '</th>
-					<th>' . __( 'Title', 'planet4-blocks-backend' ) . '</th>
-				</tr>';
-				foreach ( $results as $result ) {
-					$title = empty($result->name) ? self::NO_TITLE : $result->name;
-					echo  '<tr><td><a href="term.php?taxonomy=post_tag&tag_ID=' . $result->term_id . '" >' . $result->term_id . '</a></td>';
-					echo  '<td><a href="' . get_term_link( (int) $result->term_id ) . '" target="_blank">' . $title . '</a></td></tr>';
-				}
-				echo '</table>';
-			} else {
-				$report[ 'TagsUsingRedirectionPage' ] = count($results);
-			}
+			echo '<form id="blocks-search" method="post">';
+			$tb->views();
+			$tb->search_box('Search blocks', 'block-search');
+			$tb->display();
+			echo '</form>';
 
-			// Add to the report a breakdown of Campaigns, pages & Posts count.
-			$p4_page_types = [
-				'campaign',
-				'post',
-				'page',
-			];
-
-			// SQL Query placeholders.
-			$placeholders   = [];
-			$pagetype_count = count( $p4_page_types );
-			for ( $i = 2; $i < $pagetype_count + 2; $i++ ) {
-				$placeholders[] = "'%$i\$s'";
-			}
-			$placeholders = implode( ',', $placeholders );
-
-			$sql = 'SELECT post_type, count(ID) AS post_count
-					FROM %1$s
-					WHERE post_status = \'publish\'
-						GROUP BY `post_type` HAVING `post_type` IN (' . $placeholders . ')';
-
-			$values       = [];
-			$values[0]    = $wpdb->posts;
-			$values       = array_merge( $values, $p4_page_types );
-			$prepared_sql = $wpdb->prepare( $sql, $values );
-			$results      = $wpdb->get_results( $prepared_sql );
-
-			if ( 'text' === $type ) {
-				echo '<hr>';
-				echo '<table><tr style="text-align: left">
-					<th>' . __( 'Page type', 'planet4-blocks-backend' ) . '</th>
-					<th>' . __( 'Count', 'planet4-blocks-backend' ) . '</th>
-			</tr>';
-				foreach ( $results as $result ) {
-					echo '<tr><td>N of ' . ucfirst( $result->post_type ) . ' content type</td>';
-					echo '<td><a href="edit.php?post_status=publish&post_type=' . $result->post_type . '" >' . $result->post_count . '</a></td></tr>';
-				}
-				echo '</table>';
-			} else {
-				foreach ( $results as $result ) {
-					$report[ 'N-of-' . $result->post_type . '-content-type' ] = (int) $result->post_count;
-				}
-			}
-			// phpcs:enable
-
-			if ( 'json' === $type ) {
-				return $report;
-			}
+			echo '</div>';
 		}
 
 		/**
