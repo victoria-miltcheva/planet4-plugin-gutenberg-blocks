@@ -10,6 +10,7 @@ namespace P4GBKS\Controllers\Menu;
 
 use P4\MasterTheme\Exception\SqlInIsEmpty;
 use P4\MasterTheme\SqlParameters;
+use P4GBKS\Controllers\Block_Search;
 use P4GBKS\Controllers\Block_Usage_Table;
 use WP_Block_Type_Registry;
 
@@ -117,17 +118,17 @@ if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
 			global $wpdb;
 
 			$tb = new Block_Usage_Table(
-				[
-					'wpdb'     => $wpdb,
-					'group_by' => $_REQUEST['group'] ?? null,
-					'search'   => $_REQUEST['s'] ?? null,
-					'filters'  => [
-						'block_ns'   => $_REQUEST['ns'] ?? null,
-						'block_type' => $_REQUEST['type'] ?? null,
-					],
-				]
+				[ 'search' => new Block_Search( $wpdb ) ]
 			);
-			$tb->prepare_items();
+
+			$tb->prepare_items(
+				$_REQUEST['s'] ?? null,
+				[
+					'block_ns'   => $_REQUEST['ns'] ?? null,
+					'block_type' => $_REQUEST['type'] ?? null,
+				],
+				$_REQUEST['group'] ?? null
+			);
 
 			echo '<div class="wrap">
 				<h1 class="wp-heading-inline">Block usage</h1>
@@ -135,7 +136,7 @@ if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
 
 			echo '<form id="blocks-search" method="post">';
 			$tb->views();
-			$tb->search_box( 'Search blocks', 'block-search' );
+			$tb->search_box( 'Search in blocks', 'block-search' );
 			$tb->display();
 			echo '</form>';
 
