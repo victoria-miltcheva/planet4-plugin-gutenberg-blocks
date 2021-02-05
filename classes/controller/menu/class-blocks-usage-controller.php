@@ -98,7 +98,7 @@ if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
 					[ $this, 'plugin_blocks_report' ]
 				);
 
-				// Experimental block usage page, hidden in menu
+				// Experimental block usage page, hidden in menu.
 				add_submenu_page(
 					null,
 					__( 'Usage', 'planet4-blocks-backend' ),
@@ -110,30 +110,32 @@ if ( ! class_exists( 'Blocks_Usage_Controller' ) ) {
 			}
 		}
 
+		/**
+		 * New block usage report page.
+		 */
 		public function next_plugin_block_report() {
 			global $wpdb;
 
-			$tb = new Block_Usage_Table([
-				'wpdb' => $wpdb,
-				'group_by' => $_REQUEST['group'] ?? null,
-				'search' => $_REQUEST['s'] ?? null,
-				'filters' => [
-					'block_ns' => $_REQUEST['ns'] ?? null,
-					'block_type' => $_REQUEST['type'] ?? null,
-				],
-			]);
+			$tb = new Block_Usage_Table(
+				[
+					'wpdb'     => $wpdb,
+					'group_by' => $_REQUEST['group'] ?? null,
+					'search'   => $_REQUEST['s'] ?? null,
+					'filters'  => [
+						'block_ns'   => $_REQUEST['ns'] ?? null,
+						'block_type' => $_REQUEST['type'] ?? null,
+					],
+				]
+			);
 			$tb->prepare_items();
 
-			echo sprintf('<div class="wrap">
+			echo '<div class="wrap">
 				<h1 class="wp-heading-inline">Block usage</h1>
-				<hr class="wp-header-end">',
-				$tb->block_count(),
-				$tb->post_count()
-			);
+				<hr class="wp-header-end">';
 
 			echo '<form id="blocks-search" method="post">';
 			$tb->views();
-			$tb->search_box('Search blocks', 'block-search');
+			$tb->search_box( 'Search blocks', 'block-search' );
 			$tb->display();
 			echo '</form>';
 
