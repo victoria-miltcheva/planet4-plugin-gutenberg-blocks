@@ -1,4 +1,6 @@
-/* global Hammer */
+/* global jQuery,Hammer */
+
+const $ = jQuery;
 
 export const FullWidthCarouselHeader = {
   /**

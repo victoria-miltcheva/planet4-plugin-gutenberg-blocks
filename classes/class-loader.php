@@ -408,7 +408,7 @@ final class Loader {
 				'wp-i18n',
 				'main',
 			],
-			true
+			!Features::is_active(Features::RENDER_IN_HEAD)
 		);
 
 		self::enqueue_local_script( 'post_action', 'public/js/post_action.js', [ 'jquery' ] );
