@@ -3,14 +3,14 @@ import { useArticlesFetch } from './useArticlesFetch';
 
 const { __ } = wp.i18n;
 
-export const ArticlesFrontend = (props) => {
+export const ArticlesFrontend = attributes => {
   const {
     article_heading,
     articles_description,
     read_more_text,
     read_more_link,
     button_link_new_tab,
-  } = props;
+  } = attributes;
 
   const postType = document.body.getAttribute('data-post-type');
 
@@ -18,9 +18,9 @@ export const ArticlesFrontend = (props) => {
 
   const postId = !postIdClass ? null : postIdClass.split('-')[1];
 
-  const postCategories = props.post_categories || [];
+  const postCategories = attributes.post_categories || [];
 
-  const { posts, loadNextPage, hasMorePages, loading } = useArticlesFetch(props, postType, postId, document.body.dataset.nro, postCategories);
+  const { posts, loadNextPage, hasMorePages, loading } = useArticlesFetch(attributes, postType, postId, document.body.dataset.nro, postCategories);
 
   if (!posts.length) {
     return null;

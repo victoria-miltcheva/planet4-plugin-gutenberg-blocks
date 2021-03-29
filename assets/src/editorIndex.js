@@ -1,4 +1,4 @@
-import { ArticlesBlock } from './blocks/Articles/ArticlesBlock';
+import { registerArticlesBlock } from './blocks/Articles/ArticlesBlock';
 import { CarouselHeaderBlock } from './blocks/Carouselheader/CarouselHeaderBlock';
 import { ColumnsBlock } from './blocks/Columns/ColumnsBlock';
 import { CookiesBlock } from './blocks/Cookies/CookiesBlock';
@@ -26,7 +26,7 @@ import { blockEditorValidation } from './BlockEditorValidation';
 import { ENFormBlock } from './blocks/ENForm/ENFormBlock';
 
 blockEditorValidation();
-new ArticlesBlock();
+registerArticlesBlock();
 new CarouselHeaderBlock();
 new ColumnsBlock();
 new CookiesBlock();
