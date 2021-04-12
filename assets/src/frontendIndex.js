@@ -13,7 +13,6 @@ import { setupLightboxForImages } from './components/Lightbox/setupLightboxForIm
 
 // Render React components
 const COMPONENTS = {
-  'planet4-blocks/spreadsheet': SpreadsheetFrontend,
   'planet4-blocks/counter': CounterFrontend,
   'planet4-blocks/articles': ArticlesFrontend,
   'planet4-blocks/cookies': CookiesFrontend,

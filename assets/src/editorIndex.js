@@ -16,7 +16,6 @@ import { registerTimelineBlock } from './blocks/Timeline/TimelineBlock';
 import { addBlockFilters } from './BlockFilters';
 import { setupImageBlockExtension } from './ImageBlockExtension';
 import { replaceTaxonomyTermSelectors } from "./replaceTaxonomyTermSelectors";
-import { SpreadsheetBlock } from "./blocks/Spreadsheet/SpreadsheetBlock"
 import { addButtonLinkPasteWarning } from './addButtonLinkPasteWarning';
 import { setupCustomSidebar } from './setupCustomSidebar';
 import { setUpCssVariables } from './connectCssVariables';
@@ -37,7 +36,6 @@ registerMediaBlock();
 new SocialmediaBlock();
 new SocialMediaCardsBlock();
 registerSplittwocolumnsBlock();
-new SpreadsheetBlock();
 registerSubmenuBlock();
 new SubPagesBlock();
 new TakeactionboxoutBlock();

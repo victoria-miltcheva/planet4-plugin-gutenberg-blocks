@@ -25,6 +25,10 @@ class Spreadsheet extends Base_Block {
 	 * SpreadsheetTable constructor.
 	 */
 	public function __construct() {
+		add_action( 'init', [ $this, 'register_accordion_block' ] );
+	}
+
+	public function register_spreadsheet_block() {
 		register_block_type(
 			self::get_full_block_name(),
 			[
