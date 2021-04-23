@@ -5,19 +5,30 @@
  * @package P4BKS\Controllers
  */
 
-namespace P4GBKS\Controllers;
+namespace P4GBKS\Search\Block;
 
+use InvalidArgumentException;
 use WP_List_Table;
+use WP_Block_Type_Registry;
 
 /**
- * Block usage, using native WordPress table
+ * Show block usage, using native WordPress table
  */
-class Block_Usage_Table extends WP_List_Table {
+class BlockUsageTable extends WP_List_Table {
+	/**
+	 * @var BlockUsage
+	 */
+	private $block_usage;
 
 	/**
-	 * @var Block_Search
+	 * @var WP_Block_Type_Registry
 	 */
-	private $search;
+	private $block_registry;
+
+	/**
+	 * @var string[] Search filters requested.
+	 */
+	private $search_params = [];
 
 	/**
 	 * @var string Group column.
@@ -30,9 +41,9 @@ class Block_Usage_Table extends WP_List_Table {
 	private $sort_by = [ 'post_title', 'post_id' ];
 
 	/**
-	 * @var string[] Filters applied.
+	 * @var string[]
 	 */
-	private $filters = [];
+	private $allowed_groups = [ 'block_type', 'post_id', 'post_title' ];
 
 	/**
 	 * @var string[]|null Columns name => title.
@@ -55,48 +66,94 @@ class Block_Usage_Table extends WP_List_Table {
 	private $blocks_types = null;
 
 	/**
-	 * @var string[]
-	 */
-	private $allowed_groups = [ 'block_type', 'post_id', 'post_title' ];
-
-	/**
 	 * @param array $args Args.
+	 * @throws InvalidArgumentException Throws on missing parameter.
 	 * @see WP_List_Table::__construct()
 	 */
 	public function __construct( $args = [] ) {
 		$args['plural'] = 'blocks';
 		parent::__construct( $args );
 
-		$this->search = $args['search'] ?? null;
+		$this->block_usage    = $args['block_usage'] ?? null;
+		$this->block_registry = $args['block_registry'] ?? null;
+
+		if ( ! ( $this->block_usage instanceof BlockUsage ) ) {
+			throw new InvalidArgumentException(
+				'Table requires a BlockUsage instance.'
+			);
+		}
+		if ( ! ( $this->block_registry instanceof WP_Block_Type_Registry ) ) {
+			throw new InvalidArgumentException(
+				'Table requires a WP_Block_Type_Registry instance.'
+			);
+		}
 	}
 
 	/**
 	 * Prepares table data.
 	 *
-	 * @param ?string $search   Search string.
-	 * @param ?array  $filters  Filters.
-	 * @param ?string $group_by Grouping dimension.
+	 * @param ?array  $search_params Search parameters.
+	 * @param ?string $group_by    Grouping dimension.
 	 */
 	public function prepare_items(
-		?string $search = null,
-		?array $filters = null,
+		?array $search_params = null,
 		?string $group_by = null
 	): void {
-		$this->filters  = $filters;
+		$this->search_params = $search_params;
+		$this->normalize_search_params();
+
 		$this->group_by = in_array( $group_by, $this->allowed_groups, true )
 			? $group_by : $this->allowed_groups[0];
-		$sort           = array_merge( [ $this->group_by ], $this->sort_by );
 
-		$this->items           = $this->search->find( $search, $filters, $sort );
+		$this->items = $this->block_usage->get_blocks_usage(
+			new QueryParameters(
+				$this->search_params['block_ns'] ?? null,
+				$this->search_params['block_type'] ?? null,
+				null,
+				$this->search_params['text_search'] ?? null,
+				[ 'publish', 'private', 'draft', 'pending', 'future' ],
+				array_merge( [ $this->group_by ], $this->sort_by )
+			)
+		);
+
+		$this->set_block_filters();
 		$this->_column_headers = $this->get_column_headers();
+	}
 
-		$this->blocks_ns = array_unique(
-			array_column( $this->items, 'block_ns' )
-		);
+	/**
+	 * Resolve search parameters conflicts
+	 */
+	public function normalize_search_params() {
+		if ( ! empty( $this->search_params['block_type'] ) ) {
+			$this->search_params['block_ns'] = null;
+		}
+	}
 
-		$this->blocks_types = array_unique(
-			array_column( $this->items, 'block_type' )
+	/**
+	 * Set dropdown filters content.
+	 */
+	private function set_block_filters(): void {
+		$names = array_keys(
+			$this->block_registry->get_all_registered()
 		);
+		sort( $names );
+		$this->blocks_types = $names;
+
+		$namespaces = array_filter(
+			array_unique(
+				array_map(
+					static function ( string $name ) {
+						return explode( '/', $name )[0] ?? null;
+					},
+					$this->blocks_types
+				)
+			)
+		);
+		// @todo WP 5.8 : parse blocks variations
+		// core-embed/* are not in all registered, probably variations
+		$namespaces[] = 'core-embed';
+		sort( $namespaces );
+		$this->blocks_ns = $namespaces;
 	}
 
 	/**
@@ -110,11 +167,11 @@ class Block_Usage_Table extends WP_List_Table {
 		$default_columns = [
 			'post_title'    => 'Title',
 			'block_type'    => 'Block',
-			'block_opts'    => 'Block options',
-			'post_date'     => 'Date',
+			'block_attrs'   => 'Attributes',
+			'post_date'     => 'Created',
 			'post_modified' => 'Modified',
 			'post_id'       => 'ID',
-			'match'         => 'Match',
+			'post_status'   => 'Status',
 		];
 
 		$this->columns = array_merge(
@@ -140,20 +197,21 @@ class Block_Usage_Table extends WP_List_Table {
 	 * Available grouping as views.
 	 */
 	protected function get_views() {
-		$link_tpl = '<a href="%s">%s</a>';
+		$link_tpl        = '<a href="%s">%s</a>';
+		$active_link_tpl = '<a class="current" href="%s">%s</a>';
 		return [
 			'block_type' => sprintf(
-				$link_tpl,
+				'block_type' === $this->group_by ? $active_link_tpl : $link_tpl,
 				add_query_arg( 'group', 'block_type' ),
 				'Group by block type'
 			),
 			'post_title' => sprintf(
-				$link_tpl,
+				'post_title' === $this->group_by ? $active_link_tpl : $link_tpl,
 				add_query_arg( 'group', 'post_title' ),
 				'Group by post title'
 			),
 			'post_id'    => sprintf(
-				$link_tpl,
+				'post_id' === $this->group_by ? $active_link_tpl : $link_tpl,
 				add_query_arg( 'group', 'post_id' ),
 				'Group by post ID'
 			),
@@ -165,7 +223,7 @@ class Block_Usage_Table extends WP_List_Table {
 	 */
 	private function blockns_dropdown() {
 		sort( $this->blocks_ns );
-		$filter = $this->filters['block_ns'] ?? null;
+		$filter = $this->search_params['block_ns'] ?? null;
 
 		echo '<select name="ns" id="filter-by-ns">';
 		echo '<option value="">- All namespaces -</option>';
@@ -185,7 +243,7 @@ class Block_Usage_Table extends WP_List_Table {
 	 */
 	private function blocktype_dropdown() {
 		sort( $this->blocks_types );
-		$filter = $this->filters['block_type'] ?? null;
+		$filter = $this->search_params['block_type'] ?? null;
 
 		echo '<select name="type" id="filter-by-type">';
 		echo '<option value="">- All blocks -</option>';
@@ -250,16 +308,19 @@ class Block_Usage_Table extends WP_List_Table {
 	 * @param array $item Item.
 	 * @return string
 	 */
-	public function column_block_opts( $item ): string {
-		$content = $item['block_opts'] ?? null;
+	public function column_block_attrs( $item ): string {
+		$content = $item['block_attrs'] ?? null;
 		if ( empty( $content ) ) {
 			return '';
 		}
 
+		$content = print_r( $content, true );
+		$content = trim( substr( $content, 5, strlen( $content ) ) );
+
 		return sprintf(
 			'<span title="%s">%s</span>',
 			htmlentities( $content ),
-			( strlen( $content ) > 19 ? substr( $content, 0, 19 ) . '...' : $content )
+			( strlen( $content ) > 30 ? substr( $content, 0, 30 ) . '...' : $content )
 		);
 	}
 
@@ -270,10 +331,20 @@ class Block_Usage_Table extends WP_List_Table {
 	 * @return string
 	 */
 	public function column_post_title( $item ): string {
+		$content = $item['post_title'] ?? null;
+		if ( empty( $content ) ) {
+			return '';
+		}
+
+		$title_tpl = '%2$s';
+		$link_tpl  = '<a href="%s" title="%s">%s</a>';
+		$page_uri  = get_page_uri( $item['post_id'] );
+
 		return sprintf(
-			'<a href="%s">%s</a>',
-			get_page_uri( $item['post_id'] ),
-			$item['post_title']
+			empty( $page_uri ) ? $title_tpl : $link_tpl,
+			$page_uri,
+			htmlentities( $content ),
+			( strlen( $content ) > 45 ? substr( $content, 0, 45 ) . '...' : $content )
 		);
 	}
 
@@ -286,29 +357,8 @@ class Block_Usage_Table extends WP_List_Table {
 	public function column_post_id( $item ): string {
 		return sprintf(
 			'<a href="%s">%s</a>',
-			get_page_uri( $item['post_id'] ),
+			get_edit_post_link( $item['post_id'] ),
 			$item['post_id']
-		);
-	}
-
-	/**
-	 * Match display.
-	 *
-	 * @param array $item Item.
-	 * @return string
-	 */
-	public function column_match( $item ): string {
-		$content = $item['match'] ?? null;
-		if ( empty( $content ) ) {
-			return '';
-		}
-
-		return sprintf(
-			'<span title="%s">%s</span>',
-			htmlentities( $content ),
-			htmlentities(
-				( strlen( $content ) > 19 ? substr( $content, 0, 19 ) . '...' : $content )
-			)
 		);
 	}
 
@@ -418,7 +468,7 @@ class Block_Usage_Table extends WP_List_Table {
 	 * @return int
 	 */
 	public function block_count(): int {
-		return $this->search->block_count();
+		return count( $this->items );
 	}
 
 	/**
@@ -427,6 +477,20 @@ class Block_Usage_Table extends WP_List_Table {
 	 * @return int
 	 */
 	public function post_count(): int {
-		return $this->search->post_count();
+		return count(
+			array_unique(
+				array_column(
+					$this->items,
+					'post_id'
+				)
+			)
+		);
+	}
+
+	/**
+	 * Search parameters
+	 */
+	public function get_search_params(): array {
+		return $this->search_params;
 	}
 }
