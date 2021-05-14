@@ -128,6 +128,8 @@ commands:
             MASTER_THEME_BRANCH=dev-master \
             MERGE_SOURCE=git@github.com:greenpeace/planet4-base.git \
             MERGE_REF=main \
+            APP_IMAGE=gcr.io/planet-4-151612/wordpress:planet-6023-bis \
+            PARENT_VERSION=planet-6023-bis \
             make ci
       - run:
           name: Test - Clone planet4-docker-compose
