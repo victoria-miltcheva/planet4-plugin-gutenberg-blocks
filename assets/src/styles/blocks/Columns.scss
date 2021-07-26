@@ -19,6 +19,7 @@
       color: $grey-80;
       margin-bottom: .5rem;
       text-transform: none;
+      text-align: left;
 
       @include medium-and-up {
         font-size: 1.5rem;
@@ -388,6 +389,9 @@
       }
 
       p {
+        --block-columns--column-text-- {
+          text-align: left;
+        }
         flex-grow: 1;
 
         @include medium-and-up {
