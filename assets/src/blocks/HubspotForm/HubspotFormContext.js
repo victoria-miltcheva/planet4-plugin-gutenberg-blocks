@@ -16,6 +16,12 @@ const ContextProvider = ({
   hubspot_shortcode,
   hubspot_thankyou_message,
   enable_custom_hubspot_thankyou_message,
+  thankyou_title_step_1,
+  thankyou_description_step_1,
+  thankyou_title_step_2,
+  thankyou_description_step_2,
+  thankyou_title_step_3,
+  thankyou_description_step_3,
   children,
 }) => (
   <Provider
@@ -31,6 +37,12 @@ const ContextProvider = ({
       hubspot_shortcode,
       hubspot_thankyou_message,
       enable_custom_hubspot_thankyou_message,
+      thankyou_title_step_1,
+      thankyou_description_step_1,
+      thankyou_title_step_2,
+      thankyou_description_step_2,
+      thankyou_title_step_3,
+      thankyou_description_step_3,
     }}>
     {children}
   </Provider>

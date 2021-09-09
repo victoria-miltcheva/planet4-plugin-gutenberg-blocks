@@ -78,6 +78,24 @@ class HubspotForm extends Base_Block {
 						'type' => 'boolean',
 						'default' => true,
 					],
+					'thankyou_title_step_1'      	=> [
+						'type' => 'string',
+					],
+					'thankyou_description_step_1'	=> [
+						'type' => 'string',
+					],
+					'thankyou_title_step_2'      	=> [
+						'type' => 'string',
+					],
+					'thankyou_description_step_2' => [
+						'type' => 'string',
+					],
+					'thankyou_title_step_3'				=> [
+						'type' => 'string',
+					],
+					'thankyou_description_step_3' => [
+						'type' => 'string',
+					],
 				],
 			]
 		);

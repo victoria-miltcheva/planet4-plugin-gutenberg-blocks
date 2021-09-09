@@ -3,6 +3,7 @@ import { RawHTML, Fragment } from '@wordpress/element';
 import { Tooltip } from '@wordpress/components';
 import { HubspotFormEditor } from './HubspotFormEditor';
 import { HubspotFormFrontend } from './HubspotFormFrontend';
+import { ThankYouEditor } from './ThankYou/ThankYouEditor';
 
 const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
@@ -65,6 +66,25 @@ export const registerHubspotFormBlock = () => {
         type: 'boolean',
         default: true,
       },
+      thankyou_title_step_1: {
+        type: 'string',
+      },
+      thankyou_description_step_1: {
+        type: 'string',
+      },
+      thankyou_title_step_2: {
+        type: 'string',
+      },
+      thankyou_description_step_2: {
+        type: 'string',
+      },
+      thankyou_title_step_3: {
+        type: 'string',
+        default: 'Take more actions',
+      },
+      thankyou_description_step_3: {
+        type: 'string',
+      },
       version: {
         type: 'integer',
         default: 1,
@@ -83,6 +103,7 @@ export const registerHubspotFormBlock = () => {
     edit: (props) => (
       <Fragment>
         <HubspotFormEditor {...props} />
+        <ThankYouEditor {...props} />
       </Fragment>
     ),
     save: ({

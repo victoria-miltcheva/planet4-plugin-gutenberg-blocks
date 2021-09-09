@@ -1,6 +1,7 @@
 import { Fragment, useContext, useRef } from '@wordpress/element';
 import { HubspotFormContext, HubspotFormProvider } from './HubspotFormContext';
 import { useCreateHubspotForm } from './useCreateHubspotForm';
+import { ThankYouFrontend } from './ThankYou/ThankYouFrontend';
 
 const { __ } = wp.i18n;
 
@@ -87,6 +88,7 @@ const Component = () => {
           </div>
         </div>
       </section>
+      {showThankyou && <ThankYouFrontend userName={userName}/>}
     </Fragment>
   )
 }
