@@ -175,11 +175,13 @@ const BETA_CAMPAIGN_BLOCK_TYPES = [
  * Allowed block types based on post type
  *
  * @param array  $allowed_block_types array of allowed block types.
- * @param object $post current post.
+ * @param object $context The block editor context.
  *
  * @return array of all blocks allowed.
  */
-function set_allowed_block_types( $allowed_block_types, $post ) {
+function set_allowed_block_types( $allowed_block_types, $context ) {
+	$post = $context->post;
+
 	// phpcs:disable Squiz.PHP.CommentedOutCode.Found -- allow these comments
 	$wordpress_blocks = [
 		'core/block',
@@ -281,7 +283,7 @@ function set_allowed_block_types( $allowed_block_types, $post ) {
 	return $allowed_block_types;
 }
 
-add_filter( 'allowed_block_types', 'set_allowed_block_types', 10, 2 );
+add_filter( 'allowed_block_types_all', 'set_allowed_block_types', 10, 2 );
 
 /**
  * @param array $block the block being rendered.

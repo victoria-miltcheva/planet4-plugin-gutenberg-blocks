@@ -168,7 +168,7 @@ final class Loader {
 		add_action( 'admin_init', [ $this, 'set_color_palette' ] );
 
 		// Register a block category.
-		add_filter( 'block_categories', [ $this, 'register_block_category' ], 10, 2 );
+		add_filter( 'block_categories_all', [ $this, 'register_block_category' ], 10, 2 );
 		// Provide hook for other plugins.
 		do_action( 'p4gbks_plugin_loaded' );
 	}
