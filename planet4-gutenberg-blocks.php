@@ -283,7 +283,7 @@ function set_allowed_block_types( $allowed_block_types, $context ) {
 	return $allowed_block_types;
 }
 
-add_filter( 'allowed_block_types_all', 'set_allowed_block_types', 10, 2 );
+//add_filter( 'allowed_block_types_all', 'set_allowed_block_types', 10, 2 );
 
 /**
  * @param array $block the block being rendered.
