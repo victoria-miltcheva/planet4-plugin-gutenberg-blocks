@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { unescape } from '../../functions/unescape';
 
-import { inputName } from './inputName';
+import { inputId, inputName } from './inputName';
 
 const { __ } = wp.i18n;
 
@@ -61,10 +61,12 @@ export const ENFormFrontend = (attributes) => {
   const HeadingTag = content_title_size;
 
   const [activeTplId, setActiveTplId] = useState('signup');
+  const [errors, setErrors] = useState([]);
   const [error_msg, setErrorMsg] = useState(null);
   const [form_data, setFormData] = useState(
     fields.reduce((acc, f) => { return {...acc, [inputName(f)]: null} }, {})
   );
+
   const onInputChange = (e) => {
     const target = e.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -76,6 +78,12 @@ export const ENFormFrontend = (attributes) => {
 
   const onFormSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm(form_data, fields, setErrors)) {
+      console.error('Validation error.');
+      return;
+    }
+
     const url = `https://e-activist.com/ens/service/page/${en_page_id}/process`;
     submitENForm({form_data, fields, url, enform_goal, thankyou_url, setErrorMsg, setActiveTplId});
   }
@@ -118,7 +126,7 @@ export const ENFormFrontend = (attributes) => {
             }
 
             {activeTplId === 'signup' &&
-              <Signup {...{attributes, fields, onInputChange, onFormSubmit, error_msg}} />
+              <Signup {...{attributes, fields, onInputChange, onFormSubmit, error_msg, errors}} />
             }
             {activeTplId === 'thankyou' &&
               <ThankYou {...{attributes, error_msg}} />
@@ -130,7 +138,7 @@ export const ENFormFrontend = (attributes) => {
   )
 }
 
-const Signup = ({attributes, fields, onInputChange, onFormSubmit, error_msg}) => {
+const Signup = ({attributes, fields, onInputChange, onFormSubmit, error_msg, errors}) => {
   const {
     en_form_style,
     title,
@@ -167,7 +175,7 @@ const Signup = ({attributes, fields, onInputChange, onFormSubmit, error_msg}) =>
           >
             <div className={ en_form_style == 'full-width-bg' ? 'row' : '' }>
               <div className={ en_form_style == 'full-width-bg' ? 'col-md-8' : '' }>
-                  <FormGenerator {...{fields, attributes, onInputChange}} />
+                  <FormGenerator {...{fields, attributes, onInputChange, errors}} />
               </div>
 
               <div className={ en_form_style == 'full-width-bg' ? 'col-md-4 submit' : 'submit' }>
@@ -236,12 +244,6 @@ const submitENForm = (props) => {
   };
   console.log('post data', post_data);
 
-  const formIsValid = validateForm(form_data, fields);
-  if (!formIsValid) {
-    console.error('Validation error.');
-    return;
-  }
-
   // Fetch token
   const token_endpoint = `${p4bk_vars.siteUrl}/wp-json/planet4/v1/get-en-session-token`;
   fetch(token_endpoint)
@@ -281,9 +283,8 @@ const submitENForm = (props) => {
         dataLayer.push(dataLayerPayload);
       }
 
-      // redirect
-      // todo: validate url
-      if (thankyou_url) {
+      // redirect or thanks
+      if (thankyou_url && urlIsValid(thankyou_url)) {
         window.location = thankyou_url;
       } else {
         setActiveTplId('thankyou');
@@ -299,70 +300,98 @@ const submitENForm = (props) => {
     });
 }
 
-const validateForm = (form_data, fields) => {
-  let formIsValid = true;
+const validateForm = (form_data, fields, setErrors) => {
+  let errors = [];
+  setErrors(errors);
 
   fields.forEach((f) => {
-    let field_name, elId;
-    if (f.property && f.property.length > 0) {
-      field_name = `supporter.${f.property}`;
-      elId = `en__field_supporter_${f.property}`;
-    } else {
-      field_name = `supporter.questions.${f.id}`;
-      elId = `en__field_supporter_questions_${f.id}`;
-    }
-    const value = form_data[field_name];
+    const {id, name} = field_id(f);
+    const value = form_data[name];
+    const element = document.getElementById(id);
 
-    const field_element = document.getElementById(elId);
-    if (!field_element) {
+    if (!element) {
       return;
     }
 
-    removeErrorMessage(field_element);
     if (f.required && [null, false, ''].includes(value)) {
-      formIsValid = false;
-      addErrorMessage(field_element);
+      errors.push(f.id);
+      return;
     }
 
-    const regexPattern = field_element.dataset['validate_regex'];
-    if (regexPattern) {
-      const regex = new RegExp(regexPattern);
-      const res = regex.test(formValue);
-      if (!res) {
-        addErrorMessage(field_element, field_element.dataset['data-validate_regex_msg']);
-        formIsValid = false;
+    if (element.type === "email") {
+      // Reference: https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+      let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (!re.test(String(value).toLowerCase())) {
+        errors.push(f.id);
       }
+      return;
     }
 
-    const callbackFunction = field_element.dataset['data-validate_callback'];
+    if (element.type === "radio") {
+      let sibling_radios = fields.find((f) => {
+        let {id: f_id, name: f_name} = field_id(f);
+        let f_element = document.getElementById(f_id);
+        return f_name === name && f_element && f_element.checked === true;
+      })
+      if (!sibling_radios) {
+        errors.push(f.id);
+      }
+      return;
+    }
+
+    const regexPattern = element.dataset['validate_regex'];
+    if (regexPattern?.length) {
+      const regex = new RegExp(regexPattern);
+      if (!regex.test(value)) {
+        errors.push(f.id);
+        //setFieldError(element, element.dataset['validate_regex_msg']);
+      }
+      return;
+    }
+
+    const callbackFunction = element.dataset['validate_callback'];
     if ('function' === typeof window[callbackFunction]) {
       const validateField = window[callbackFunction]($(this).val());
       if (true !== validateField) {
-        addErrorMessage(field_element, validateField);
-        formIsValid = false;
+        errors.push(f.id);
+        //setFieldError(element, validateField);
       }
+      return;
     }
   });
 
-  return formIsValid;
+  setErrors(errors);
+
+  return errors.length === 0;
 }
 
-const addErrorMessage = (element, message = null) => {
-  const error = message ?? element.dataset.errormessage ?? 'Error';
-  const invalidDiv = document.createElement('div');
-  invalidDiv.classList.add('invalid-feedback');
-  invalidDiv.innerText = error;
+const setFieldError = (element, message = null) => {
+  // const error = message ?? element.dataset.errormessage ?? 'Error';
+  // const invalidDiv = document.createElement('div');
+  // invalidDiv.classList.add('invalid-feedback');
+  // invalidDiv.innerText = error;
 
-  element.classList.add('is-invalid');
-  element.parentNode.appendChild(invalidDiv);
+  // element.classList.add('is-invalid');
+  // element.parentNode.appendChild(invalidDiv);
 }
 
-const removeErrorMessage = (element) => {
+const removeFieldError = (element) => {
   element.classList.remove('is-invalid');
   let errorDiv = element.parentNode.querySelector('.invalid-feedback');
   if (errorDiv) {
     errorDiv.parentNode.removeChild(errorDiv);
   }
+}
+
+const urlIsValid = (url_str) => {
+  try {
+    url = new URL(url_str);
+    return ['http:', 'https:'].includes(url.protocol);
+  } catch (e) {
+    console.log(e);
+  }
+
+  return false;
 }
 
 const ThankYou = ({attributes, error_msg}) => {
@@ -421,4 +450,8 @@ const ThankYou = ({attributes, error_msg}) => {
     </div>
     </div>
   )
+}
+
+const field_id = (field) => {
+  return inputId(field);
 }
